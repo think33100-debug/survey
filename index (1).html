@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>도전하는 사람들 설문 — 치료사·의료기사 채용 이야기</title>
+<meta name="description" content="학생과 임상가의 채용 경험을 듣는 3분 설문입니다.">
+<meta property="og:title" content="도전하는 사람들 설문 — 3분이면 충분해요">
+<meta property="og:description" content="의료기사 학생·임상가의 채용 이야기를 들려주세요.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{
+  --bg:#F5F3EE; --card:#FFFFFF; --ink:#1B2220; --sub:#66706C; --mute:#9AA29E;
+  --line:#E5E1D8; --acc:#2E6B5D; --acc-2:#3F8A78; --acc-soft:#E6F0EC; --acc-ink:#1E4A40;
+  --warm:#D98E2B; --warm-soft:#FBF1E2; --err:#C24A3A;
+  --r:18px; --shadow:0 1px 2px rgba(20,30,25,.04),0 8px 28px rgba(20,30,25,.06);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+  font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:anywhere}
+button,input,textarea,select{font:inherit;color:inherit}
+
+/* 위 띠 */
+.top{position:sticky;top:0;z-index:5;background:rgba(245,243,238,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.top-in{max-width:600px;margin:0 auto;padding:14px 16px 10px;display:flex;align-items:center;gap:12px}
+.brand{font-weight:800;letter-spacing:-.01em;font-size:15px;color:var(--acc-ink)}
+.brand i{font-style:normal;color:var(--warm)}
+.step{margin-left:auto;font-size:13px;color:var(--sub);font-variant-numeric:tabular-nums}
+.bar{height:3px;background:var(--line)}
+.bar>div{height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--acc-2));transition:width .35s ease}
+
+main{max-width:600px;margin:0 auto;padding:20px 16px 120px}
+.page{display:none;animation:in .3s ease}
+.page.on{display:block}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.sec-tag{display:inline-block;font-size:12px;font-weight:700;color:var(--acc);background:var(--acc-soft);
+  padding:4px 10px;border-radius:99px;margin:4px 0 10px}
+h1{font-size:28px;line-height:1.3;margin:6px 0 12px;letter-spacing:-.02em}
+h2{font-size:21px;line-height:1.35;margin:0 0 4px;letter-spacing:-.01em}
+.lead{color:var(--sub);margin:0 0 18px}
+
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:22px 20px;margin:0 0 14px}
+.q-label{font-weight:700;font-size:17px;line-height:1.45;margin:0 0 4px}
+.q-label .req{color:var(--warm);margin-left:3px}
+.q-help{font-size:13.5px;color:var(--sub);margin:0 0 14px}
+.q-err{display:none;color:var(--err);font-size:13px;margin-top:10px}
+.card.bad{box-shadow:0 0 0 2px #F0C8C1,var(--shadow)}
+.card.bad .q-err{display:block}
+
+/* 보기 */
+.opts{display:grid;gap:8px}
+.opts.cols2{grid-template-columns:1fr 1fr}
+.opt{position:relative;display:flex;align-items:flex-start;gap:10px;width:100%;text-align:left;cursor:pointer;
+  background:#FBFAF7;border:1.5px solid var(--line);border-radius:14px;padding:13px 14px;transition:all .15s ease}
+.opt:hover{border-color:#CFC9BC}
+.opt .mk{flex:0 0 20px;height:20px;margin-top:2px;border:1.5px solid #C6C0B3;border-radius:50%;display:grid;place-items:center;transition:all .15s}
+.opt.multi .mk{border-radius:6px}
+.opt .tx{flex:1;min-width:0}
+.opt .tx b{font-weight:600}
+.opt .tx small{display:block;color:var(--sub);font-size:12.5px;line-height:1.45;margin-top:2px}
+.opt.sel{border-color:var(--acc);background:var(--acc-soft)}
+.opt.sel .mk{background:var(--acc);border-color:var(--acc)}
+.opt.sel .mk::after{content:"";width:9px;height:5px;border:2px solid #fff;border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px)}
+.opt.dim{opacity:.45}
+.etc{display:none;margin:-2px 0 4px}
+.etc.on{display:block}
+.etc .soft{font-size:12.5px;color:var(--acc);margin:6px 2px 6px}
+
+input[type=text],input[type=tel],textarea,select{width:100%;background:#FBFAF7;border:1.5px solid var(--line);border-radius:12px;
+  padding:12px 14px;outline:none;transition:border .15s}
+input:focus,textarea:focus,select:focus{border-color:var(--acc);background:#fff}
+textarea{min-height:96px;resize:vertical}
+.field{margin:12px 0 0}
+.field label{display:block;font-size:14px;font-weight:600;margin:0 0 6px}
+
+/* 척도 */
+.scale{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.scale button{border:1.5px solid var(--line);background:#FBFAF7;border-radius:12px;padding:12px 0;font-weight:700;cursor:pointer;transition:all .15s}
+.scale button.sel{background:var(--acc);border-color:var(--acc);color:#fff}
+.scale-cap{display:flex;justify-content:space-between;font-size:12.5px;color:var(--sub);margin-top:6px}
+
+/* 소개 */
+.hero{padding:26px 22px;background:linear-gradient(160deg,#2E6B5D 0%,#245548 100%);color:#fff;border-radius:22px;position:relative;overflow:hidden}
+.hero::before,.hero::after{content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.07)}
+.hero::before{width:220px;height:220px;right:-70px;top:-80px}
+.hero::after{width:120px;height:120px;right:40px;bottom:-60px;background:rgba(217,142,43,.25)}
+.hero h1{color:#fff;position:relative}
+.hero p{position:relative;color:rgba(255,255,255,.86);margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px;position:relative}
+.chips span{font-size:12.5px;background:rgba(255,255,255,.14);padding:5px 10px;border-radius:99px}
+.meta{display:flex;gap:16px;margin:16px 4px 0;color:var(--sub);font-size:13.5px}
+.meta b{color:var(--ink)}
+
+.feat{display:grid;gap:10px;margin:14px 0 4px}
+.feat div{display:flex;gap:12px;align-items:flex-start}
+.feat i{flex:0 0 30px;height:30px;border-radius:9px;background:var(--acc-soft);color:var(--acc);display:grid;place-items:center;font-style:normal;font-weight:800;font-size:13px}
+.feat b{display:block;font-size:15px}
+.feat small{color:var(--sub);font-size:13px}
+.notice{font-size:13px;color:var(--sub);background:#F8F6F1;border-radius:12px;padding:12px 14px;margin-top:14px}
+
+/* 이름 */
+.names{display:grid;gap:10px}
+.name{text-align:left;cursor:pointer;border:1.5px solid var(--line);background:#FBFAF7;border-radius:16px;padding:16px 16px 14px;transition:all .15s;width:100%}
+.name .nm{display:flex;align-items:baseline;gap:8px;margin-bottom:6px}
+.name .nm b{font-size:20px;letter-spacing:-.01em}
+.name .nm em{font-style:normal;font-size:12.5px;color:var(--mute)}
+.name p{margin:0;font-size:14px;color:var(--sub);line-height:1.55}
+.name.sel{border-color:var(--acc);background:var(--acc-soft)}
+.name.sel .nm b{color:var(--acc-ink)}
+
+/* 동의 */
+.consent{margin-top:14px;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.consent .doc{font-size:12.8px;color:var(--sub);background:#F8F6F1;padding:12px 14px;line-height:1.6}
+.consent .doc b{color:var(--ink)}
+.consent .doc ul{margin:6px 0 0;padding-left:18px}
+.chk{display:flex;gap:10px;align-items:center;padding:12px 14px;cursor:pointer;font-weight:600;font-size:14.5px;background:#fff}
+.chk input{width:20px;height:20px;accent-color:var(--acc);margin:0}
+
+/* 인터뷰 */
+details.iv{background:var(--warm-soft);border:1.5px solid #F0D9B5;border-radius:var(--r);margin:18px 0 14px;overflow:hidden}
+details.iv summary{list-style:none;cursor:pointer;padding:16px 18px;display:flex;align-items:center;gap:10px;font-weight:700}
+details.iv summary::-webkit-details-marker{display:none}
+details.iv summary .badge{flex:0 0 auto;white-space:nowrap;font-size:11.5px;font-weight:800;background:var(--warm);color:#fff;padding:3px 8px;border-radius:99px;letter-spacing:.02em}
+details.iv summary .arw{margin-left:auto;transition:transform .2s;color:var(--warm)}
+details.iv[open] summary .arw{transform:rotate(180deg)}
+details.iv .body{padding:0 18px 18px}
+.iv-pill{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 10px}
+.iv-pill span{font-size:12.5px;font-weight:700;background:#fff;border:1px solid #F0D9B5;color:#9A5F14;padding:5px 10px;border-radius:99px}
+.iv-carry{font-size:12.8px;color:var(--sub);background:#fff;border-radius:12px;padding:10px 12px;margin:10px 0 0}
+
+/* 아래 단추 */
+.nav{position:fixed;left:0;right:0;bottom:0;background:linear-gradient(180deg,rgba(245,243,238,0),var(--bg) 30%);padding:18px 16px calc(14px + env(safe-area-inset-bottom))}
+.nav-in{max-width:600px;margin:0 auto;display:flex;gap:10px}
+.btn{border:0;border-radius:14px;padding:15px 18px;font-weight:700;font-size:16px;cursor:pointer;transition:transform .1s,background .15s}
+.btn:active{transform:scale(.98)}
+.btn.pri{flex:1;background:var(--acc);color:#fff}
+.btn.pri:hover{background:var(--acc-2)}
+.btn.pri:disabled{background:#9DB5AE;cursor:default}
+.btn.ghost{background:#fff;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--line)}
+
+.done{text-align:center;padding:40px 10px}
+.done .ok{width:72px;height:72px;border-radius:50%;background:var(--acc-soft);display:grid;place-items:center;margin:0 auto 18px}
+.done .ok::after{content:"";width:26px;height:14px;border:4px solid var(--acc);border-top:0;border-right:0;transform:rotate(-45deg) translate(2px,-3px)}
+.done p{color:var(--sub)}
+.foot{text-align:center;font-size:12px;color:var(--mute);margin:28px 0 0}
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--ink);color:#fff;font-size:14px;padding:10px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:opacity .2s;max-width:calc(100% - 32px);text-align:center}
+.toast.on{opacity:1}
+@media (max-width:380px){.opts.cols2{grid-template-columns:1fr}h1{font-size:25px}}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="top-in"><span class="brand">도전하는 <i>사람들</i></span><span class="step" id="stepTxt"></span></div>
+  <div class="bar"><div id="bar"></div></div>
+</div>
+<main id="app"></main>
+<div class="nav"><div class="nav-in">
+  <button class="btn ghost" id="prev" type="button">이전</button>
+  <button class="btn pri" id="next" type="button">시작하기</button>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ★ Apps Script 배포 후 받은 웹 앱 주소를 여기에 붙여 넣으세요 */
+const SCRIPT_URL = 'PASTE_YOUR_WEB_APP_URL_HERE';
+
+/* ───────── 보기 목록 ───────── */
+const DEPTS = ['물리치료','작업치료','임상병리','방사선','치위생','치기공','언어치료(재활)','안경광학','보건의료정보',{t:'기타',input:'학과를 적어 주세요'}];
+const JOBS  = ['물리치료사','작업치료사','임상병리사','방사선사','치과위생사','치과기공사','언어재활사','안경사','보건의료정보관리사',{t:'기타',input:'직군을 적어 주세요'}];
+const ORG_PUBLIC = {t:'공공기관', sub:'예: 한국보훈복지의료공단, 근로복지공단, 국민건강보험공단, 도로교통공단, 지방의료원 등'};
+const ORGS_BASE = ['상급종합·대학병원','종합병원',ORG_PUBLIC,{t:'국공립병원',sub:'국립·시립·도립 등'},'재활병원','요양병원','한방병원','의원·클리닉','보건소·치매안심센터','복지관·발달센터','연구·교육·기업'];
+const PATHS = ['학교 게시판·교수님','선배·동기','카톡 오픈채팅','인스타·유튜브 등 SNS','직군 카페·커뮤니티',
+  {t:'채용 사이트',input:'어떤 사이트를 이용하셨나요?',soft:'부담 갖지 마시고 편하게 적어 주세요. 기억나는 만큼만 괜찮아요.'},
+  '병원 홈페이지','공공기관 채용 사이트','협회 홈페이지',
+  {t:'기타',input:'어디서 찾으셨나요?',soft:'편하게 적어 주세요.'}];
+const PAINS = ['공고가 여기저기 흩어져 있어요','연봉을 알 수 없어요','업무 강도를 알 수 없어요','마감을 자주 놓쳐요','내 직군 공고를 찾기 어려워요',{t:'기타',input:'편하게 적어 주세요'}];
+const FEATS = ['채용 공고 자동 모음','병원 후기','직군별 커뮤니티','청년정책·지원 정보','교육·세미나 소식'];
+const NAMES = [
+  {t:'라포', en:'Rapport', d:'치료는 신뢰에서 시작합니다. 환자와 치료사, 선배와 후배, 동료 사이에 쌓이는 믿음을 담았습니다. 치료사라면 학교에서 가장 먼저 배우는 말이기도 합니다.'},
+  {t:'손잡', en:'', d:'「손을 잡다」에서 왔습니다. 치료사의 손이 환자의 일상을 붙잡아 주듯, 사람과 일자리를 이어 준다는 뜻입니다.'},
+  {t:'핸즈온', en:'Hands-on', d:'직접 손으로 하는 일. 책상이 아니라 현장에서 일하는 사람들을 위한 정보라는 뜻입니다.'},
+  {t:'펄스', en:'Pulse', d:'맥박. 채용 시장의 흐름을 가장 먼저 짚어 드린다는 뜻입니다.'},
+  {t:'핸즈워드', en:'Hands + Ward', d:'손과 병동. 병동에서 일하는 손들이 모이는 곳이라는 뜻입니다.'}
+];
+const REGIONS = ['서울','부산','대구','인천','광주','대전','울산','세종','경기','강원','충북','충남','전북','전남','경북','경남','제주'];
+
+/* ───────── 문항 ───────── */
+const Q = {
+  role:{col:'구분',type:'single',label:'지금 어떤 상황이신가요?',req:1,opts:['학생','임상가 (현직 치료사·의료기사)',{t:'기타',sub:'휴직·졸업 후 준비 중 등',input:'지금 상황을 간단히 적어 주세요'}]},
+
+  A1:{col:'A1 나이',type:'single',label:'나이를 알려 주세요',req:1,cols:2,opts:['20~21세','22~23세','24~25세','26세 이상']},
+  A2:{col:'A2 학년',type:'single',label:'몇 학년이신가요?',req:1,cols:2,opts:['1학년','2학년','3학년','4학년','졸업예정·유예']},
+  A3:{col:'A3 학과',type:'single',label:'어떤 학과에 다니시나요?',req:1,cols:2,opts:DEPTS},
+  A4:{col:'A4 취업 관심도',type:'scale',label:'지금 취업에 얼마나 관심이 있으신가요?',req:1,lo:'아직 없어요',hi:'매우 많아요'},
+  A5:{col:'A5 관심 기관',type:'multi',max:3,label:'관심 있는 기관을 골라 주세요',help:'최대 3개까지 고를 수 있어요.',req:1,opts:[...ORGS_BASE,'아직 잘 모르겠어요']},
+  A6:{col:'A6 채용정보 찾아본 적',type:'single',label:'채용 정보를 찾아보신 적이 있으신가요?',req:1,cols:2,opts:['있어요','아직 없어요']},
+  A7:{col:'A7 찾은 경로',type:'multi',label:'어디서 찾아보셨나요?',help:'해당하는 것을 모두 골라 주세요.',req:1,opts:PATHS,show:a=>a.A6==='있어요'},
+  A8:{col:'A8 불편했던 점',type:'single',label:'채용 정보를 찾을 때 가장 불편한 점은 무엇인가요?',req:1,opts:PAINS},
+
+  B1:{col:'B1 직군',type:'single',label:'직군을 알려 주세요',req:1,cols:2,opts:JOBS},
+  B2:{col:'B2 연차',type:'single',label:'임상 연차는 어떻게 되시나요?',req:1,cols:2,opts:['1년 미만','1~3년','3~5년','5~10년','10년 이상']},
+  B3:{col:'B3 근무 기관',type:'single',label:'지금 근무하시는 기관은 어디인가요?',req:1,opts:[...ORGS_BASE,{t:'기타',input:'편하게 적어 주세요'}]},
+  B4:{col:'B4 이직 생각',type:'single',label:'이직 생각이 있으신가요?',req:1,opts:['지금 알아보고 있어요','6개월 안에 할 것 같아요','1년 안에 할 것 같아요','1~2년 안에 할 것 같아요','2~3년 안에 할 것 같아요','당분간 없어요']},
+  B5:{col:'B5 찾는 경로',type:'multi',label:'채용 공고는 주로 어디서 찾으시나요?',help:'해당하는 것을 모두 골라 주세요.',req:1,opts:PATHS},
+  B6:{col:'B6 이직 시 알고 싶은 것',type:'multi',max:2,label:'이직할 때 가장 알고 싶은 것은 무엇인가요?',help:'최대 2개까지 고를 수 있어요.',req:1,opts:['연봉','업무 강도 (하루 환자 수)','조직 분위기','교육·성장','워라밸','치료 환경']},
+  B7:{col:'B7 불편했던 점',type:'single',label:'채용 정보를 찾을 때 가장 불편한 점은 무엇인가요?',req:1,opts:PAINS},
+
+  C2:{col:'C2 기대 기능',type:'multi',max:2,label:'가장 기대되는 기능을 골라 주세요',help:'최대 2개까지 고를 수 있어요.',req:1,opts:FEATS},
+  C3:{col:'C3 추가 기능 (주관식)',type:'text',label:'이런 기능도 있었으면 좋겠다, 하는 것이 있으신가요?',help:'편하게 적어 주세요. 비워 두셔도 괜찮아요.'},
+  C4:{col:'C4 사용 의향',type:'single',label:'앱이 나오면 사용해 보실 의향이 있으신가요?',req:1,cols:2,opts:['있어요','없어요']},
+  C5:{col:'C5 출시 알림 신청',type:'single',label:'출시 소식을 문자로 받아 보시겠어요?',help:'앱이 나오면 가장 먼저 알려 드릴게요.',req:1,cols:2,opts:['네, 받을게요','괜찮아요']},
+  C6:{col:'C6 앱 이름',type:'name',label:'앱 이름으로 가장 마음에 드는 것을 골라 주세요',req:1},
+  C7:{col:'C7 하고 싶은 말 (주관식)',type:'text',label:'저희에게 하고 싶은 말씀이 있으시면 남겨 주세요',help:'응원, 아쉬운 점, 무엇이든 좋아요.'}
+};
+
+/* 쪽 구성 */
+const P = {
+  intro:{kind:'intro'},
+  role:{tag:'시작',title:'먼저 간단히 여쭤볼게요',qs:['role']},
+  A_1:{tag:'학생',title:'학생이시군요, 반가워요',qs:['A1','A2','A3']},
+  A_2:{tag:'학생',title:'취업 준비에 대해 여쭤볼게요',qs:['A4','A5']},
+  A_3:{tag:'학생',title:'채용 정보, 어떻게 찾고 계신가요?',qs:['A6','A7','A8']},
+  B_1:{tag:'임상가',title:'현장에서 고생 많으십니다',qs:['B1','B2','B3']},
+  B_2:{tag:'임상가',title:'이직과 채용 정보에 대해 여쭤볼게요',qs:['B4','B5']},
+  B_3:{tag:'임상가',title:'조금만 더 여쭤볼게요',qs:['B6','B7']},
+  C_1:{tag:'우리가 만드는 앱',title:'이런 앱을 준비하고 있어요',kind:'feat',qs:['C2','C3']},
+  C_2:{tag:'거의 다 왔어요',title:'사용해 보실 생각이 있으신가요?',kind:'alert',qs:['C4','C5']},
+  C_3:{tag:'마지막',title:'앱 이름을 함께 골라 주세요',kind:'last',qs:['C6','C7']},
+  done:{kind:'done'}
+};
+function flow(){
+  const r = S.ans.role || '';
+  const mid = r==='학생' ? ['A_1','A_2','A_3'] : r.startsWith('임상가') ? ['B_1','B_2','B_3'] : [];
+  return ['intro','role',...mid,'C_1','C_2','C_3','done'];
+}
+
+/* ───────── 상태 ───────── */
+const S = { ans:{}, etc:{}, idx:0, alert:{nick:'',phone:'',ok:false}, iv:{open:false,nick:'',phone:'',region:'',way:[],ok:false}, id: rid() };
+function rid(){ return 'R'+Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+const ot = o => typeof o==='string' ? {t:o} : o;
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const vis = id => !Q[id].show || Q[id].show(S.ans);
+function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toast.t); toast.t=setTimeout(()=>t.classList.remove('on'),2200); }
+
+/* ───────── 그리기 ───────── */
+function render(){
+  const f = flow(), key = f[S.idx], pg = P[key];
+  const app = $('#app');
+  let h = '';
+  if (pg.kind==='intro') h = introHTML();
+  else if (pg.kind==='done') h = doneHTML();
+  else {
+    h += `<span class="sec-tag">${pg.tag}</span><h2>${pg.title}</h2><p class="lead">${leadFor(key)}</p>`;
+    if (pg.kind==='feat') h += featHTML();
+    pg.qs.forEach(id => { if (vis(id)) h += qHTML(id); });
+    if (pg.kind==='alert' && S.ans.C5==='네, 받을게요') h += alertHTML();
+    if (pg.kind==='last') h += ivHTML();
+  }
+  app.innerHTML = `<section class="page on">${h}</section>`;
+  // 단추·진행
+  const total = f.length - 2, cur = Math.min(Math.max(S.idx-1,0), total);
+  $('#bar').style.width = (pg.kind==='done' ? 100 : (cur/total)*100) + '%';
+  $('#stepTxt').textContent = (pg.kind==='intro'||pg.kind==='done') ? '' : `${S.idx} / ${total}`;
+  $('#prev').style.display = (S.idx===0 || pg.kind==='done') ? 'none' : '';
+  $('#next').style.display = pg.kind==='done' ? 'none' : '';
+  $('#next').textContent = pg.kind==='intro' ? '시작하기' : key==='C_3' ? '제출하기' : '다음';
+  $('.nav').style.display = pg.kind==='done' ? 'none' : '';
+  bind();
+}
+function leadFor(k){
+  return ({role:'답에 따라 알맞은 질문으로 안내해 드릴게요.',A_1:'',A_2:'',A_3:'',B_1:'',B_2:'',B_3:'',
+    C_1:'아래 기능을 보시고, 기대되는 것과 더 있었으면 하는 것을 알려 주세요.',C_2:'',C_3:'이름 투표 뒤에 제출하시면 끝나요.'})[k] || '';
+}
+function introHTML(){
+  return `<div class="hero">
+    <h1>치료사·의료기사의<br>채용 이야기를 들려주세요</h1>
+    <p>학생과 임상가가 실제로 어떻게 일자리를 찾는지 듣고, 더 쓸모 있는 앱을 만들려고 합니다.</p>
+    <div class="chips"><span>약 3분</span><span>익명 응답</span><span>학생 · 임상가</span></div>
+  </div>
+  <div class="meta"><span>소요 <b>약 3분</b></span><span>문항 <b>15개 안팎</b></span></div>
+  <div class="card" style="margin-top:16px">
+    <p class="q-help" style="margin:0">응답은 통계로만 쓰이며, 개인을 알아볼 수 있는 정보는 묻지 않습니다. 출시 알림이나 인터뷰를 따로 신청하실 때만 닉네임과 연락처를 받습니다.</p>
+  </div>
+  <p class="foot">도전하는 사람들</p>`;
+}
+function doneHTML(){
+  const iv = S.iv.open && S.iv.ok;
+  return `<div class="done"><div class="ok"></div>
+    <h2>소중한 응답 감사합니다</h2>
+    <p>보내 주신 이야기는 앱을 만드는 데 꼼꼼히 반영하겠습니다.${S.ans.C5==='네, 받을게요'?'<br>출시되면 가장 먼저 문자로 알려 드릴게요.':''}${iv?'<br>인터뷰 신청도 잘 받았습니다. 검토 후 개별 연락 드리겠습니다.':''}</p>
+    <p class="foot">도전하는 사람들</p></div>`;
+}
+function featHTML(){
+  return `<div class="card">
+    <p class="q-label">물리·작업치료사를 시작으로, 임상병리·방사선·치위생·언어재활 등 <b>의료기사 전반</b>을 위한 채용·커뮤니티 앱을 준비하고 있습니다.</p>
+    <div class="feat">
+      <div><i>1</i><span><b>채용 공고 자동 모음</b><small>공공·대학병원 공고를 모아 모집인원·마감·연봉·고용형태를 한눈에</small></span></div>
+      <div><i>2</i><span><b>병원 후기</b><small>급여·업무 강도·분위기 등 직접 일해 본 사람들의 이야기</small></span></div>
+      <div><i>3</i><span><b>직군별 커뮤니티</b><small>같은 일을 하는 사람들끼리 묻고 답하는 공간</small></span></div>
+      <div><i>4</i><span><b>청년정책·지원 정보</b><small>취업·주거·자격 관련 청년 지원 정보를 한곳에</small></span></div>
+      <div><i>5</i><span><b>교육·세미나 소식</b><small>보수교육·학회·세미나 일정</small></span></div>
+    </div></div>`;
+}
+function qHTML(id){
+  const q = Q[id];
+  let h = `<div class="card" data-q="${id}"><p class="q-label">${q.label}${q.req?'<span class="req">*</span>':''}</p>`;
+  if (q.help) h += `<p class="q-help">${q.help}</p>`; else h += `<div style="height:10px"></div>`;
+  if (q.type==='single' || q.type==='multi'){
+    const multi = q.type==='multi';
+    const sel = multi ? (S.ans[id]||[]) : [S.ans[id]];
+    const full = multi && q.max && sel.length>=q.max;
+    h += `<div class="opts${q.cols?' cols2':''}">`;
+    q.opts.map(ot).forEach(o => {
+      const on = sel.includes(o.t);
+      h += `<button type="button" class="opt${multi?' multi':''}${on?' sel':''}${full&&!on?' dim':''}" data-v="${esc(o.t)}"><span class="mk"></span><span class="tx"><b>${esc(o.t)}</b>${o.sub?`<small>${esc(o.sub)}</small>`:''}</span></button>`;
+      if (o.input) h += `<div class="etc${on?' on':''}" style="grid-column:1/-1" data-etc="${esc(o.t)}">${o.soft?`<p class="soft">${esc(o.soft)}</p>`:''}<input type="text" maxlength="200" placeholder="${esc(o.input)}" value="${esc(S.etc[id+'|'+o.t]||'')}"></div>`;
+    });
+    h += `</div>`;
+  } else if (q.type==='scale'){
+    h += `<div class="scale">${[1,2,3,4,5].map(n=>`<button type="button" data-v="${n}" class="${S.ans[id]==n?'sel':''}">${n}</button>`).join('')}</div><div class="scale-cap"><span>${q.lo}</span><span>${q.hi}</span></div>`;
+  } else if (q.type==='text'){
+    h += `<textarea maxlength="1000" placeholder="편하게 적어 주세요">${esc(S.ans[id]||'')}</textarea>`;
+  } else if (q.type==='name'){
+    h += `<div class="names">${NAMES.map(n=>`<button type="button" class="name${S.ans[id]===n.t?' sel':''}" data-v="${n.t}"><div class="nm"><b>${n.t}</b>${n.en?`<em>${n.en}</em>`:''}</div><p>${n.d}</p></button>`).join('')}</div>`;
+  }
+  h += `<p class="q-err">답을 골라 주세요.</p></div>`;
+  return h;
+}
+function consentHTML(kind){
+  const what = kind==='alert' ? '앱 출시 알림 문자 발송' : '인터뷰 참여자 선정 및 개별 연락';
+  const items = kind==='alert' ? '닉네임, 휴대전화 번호' : '닉네임, 휴대전화 번호, 지역, 편한 인터뷰 방식, 그리고 설문 답변 중 구분·직군(학과)·학년(연차)·근무 기관';
+  const keep = kind==='alert' ? '출시 알림 발송 후 6개월까지 보관 후 파기' : '인터뷰 종료 후 6개월까지 보관 후 파기';
+  const checked = kind==='alert' ? S.alert.ok : S.iv.ok;
+  return `<div class="consent"><div class="doc"><b>개인정보 수집·이용 동의 (도전하는 사람들)</b><ul>
+    <li>목적: ${what}</li><li>항목: ${items}</li><li>보관 기간: ${keep}</li>
+    <li><b>위 목적 외의 다른 용도로는 사용하지 않으며, 제3자에게 제공하지 않습니다.</b></li>
+    <li>동의하지 않으셔도 됩니다. 동의하지 않으시면 ${kind==='alert'?'출시 알림':'인터뷰 신청'}만 받지 않으며, 설문은 그대로 제출하실 수 있습니다.</li></ul></div>
+    <label class="chk"><input type="checkbox" data-consent="${kind}" ${checked?'checked':''}> 위 내용을 확인했고 동의합니다</label></div>`;
+}
+function alertHTML(){
+  return `<div class="card" data-q="alertBox"><p class="q-label">알림 받으실 연락처를 남겨 주세요</p><p class="q-help">실명이 아니어도 괜찮아요. 닉네임으로 적어 주세요.</p>
+    <div class="field"><label>닉네임</label><input type="text" data-a="nick" maxlength="30" placeholder="예: 재활하는 곰" value="${esc(S.alert.nick)}"></div>
+    <div class="field"><label>휴대전화 번호</label><input type="tel" data-a="phone" inputmode="numeric" maxlength="13" placeholder="010-0000-0000" value="${esc(S.alert.phone)}"></div>
+    ${consentHTML('alert')}<p class="q-err" id="alertErr"></p></div>`;
+}
+function ivHTML(){
+  return `<details class="iv" ${S.iv.open?'open':''}><summary><span class="badge">모집</span>인터뷰에 참여해 주실 분을 찾고 있습니다<span class="arw">▾</span></summary>
+    <div class="body">
+      <div class="iv-pill"><span>30분 내외</span><span>사례비 1만 원</span><span>대면 · 화상 · 전화</span></div>
+      <p style="margin:0 0 6px;font-size:14.5px">앱을 더 잘 만들기 위해 현장의 이야기를 직접 듣고 싶습니다. 지금 겪고 계신 상황과 채용 정보를 찾을 때의 경험을 여쭤보려고 합니다.</p>
+      <p style="margin:0;font-size:14.5px">관심 있으신 분은 아래 신청서를 보내 주세요. 검토 후 선정된 분께 개별로 연락드리겠습니다.</p>
+      <label class="chk" style="background:transparent;padding:14px 0 4px"><input type="checkbox" id="ivWant" ${S.iv.want?'checked':''}> 인터뷰 참여를 신청합니다</label>
+      <div id="ivForm" style="display:${S.iv.want?'block':'none'}">
+        <div class="field"><label>닉네임</label><input type="text" data-i="nick" maxlength="30" placeholder="예: 재활하는 곰" value="${esc(S.iv.nick||S.alert.nick)}"></div>
+        <div class="field"><label>휴대전화 번호</label><input type="tel" data-i="phone" inputmode="numeric" maxlength="13" placeholder="010-0000-0000" value="${esc(S.iv.phone||S.alert.phone)}"></div>
+        <div class="field"><label>지역</label><select data-i="region"><option value="">시·도를 골라 주세요</option>${REGIONS.map(r=>`<option ${S.iv.region===r?'selected':''}>${r}</option>`).join('')}</select></div>
+        <div class="field"><label>편한 인터뷰 방식 (여러 개 가능)</label><div class="opts cols2" id="ivWay">${['대면','화상','전화'].map(w=>`<button type="button" class="opt multi${S.iv.way.includes(w)?' sel':''}" data-w="${w}"><span class="mk"></span><span class="tx"><b>${w}</b></span></button>`).join('')}</div></div>
+        <p class="iv-carry">직군·${S.ans.role==='학생'?'학년':'연차'} 등은 위 설문에 답해 주신 내용으로 함께 전달돼요. 다시 적지 않으셔도 됩니다.</p>
+        ${consentHTML('iv')}<p class="q-err" id="ivErr" style="margin-top:10px"></p>
+      </div>
+    </div></details>`;
+}
+
+/* ───────── 동작 ───────── */
+function bind(){
+  document.querySelectorAll('[data-q]').forEach(card => {
+    const id = card.dataset.q, q = Q[id];
+    if (!q) return;
+    card.querySelectorAll('.opt').forEach(b => b.onclick = () => {
+      const v = b.dataset.v;
+      if (q.type==='single'){ S.ans[id] = v; }
+      else {
+        const arr = S.ans[id] || (S.ans[id]=[]);
+        const i = arr.indexOf(v);
+        if (i>=0) arr.splice(i,1);
+        else { if (q.max && arr.length>=q.max){ toast(`최대 ${q.max}개까지 고를 수 있어요`); return; } arr.push(v); }
+      }
+      card.classList.remove('bad');
+      // 이 쪽 다시 그리기 (보기 의존 문항 반영)
+      const y = window.scrollY; render(); window.scrollTo(0,y);
+      const etc = document.querySelector(`[data-q="${id}"] .etc.on input`);
+      if (etc && !etc.value && (q.type==='single' ? true : (S.ans[id]||[]).includes(etc.closest('.etc').dataset.etc))) etc.focus({preventScroll:true});
+    });
+    card.querySelectorAll('.etc input').forEach(inp => inp.oninput = () => { S.etc[id+'|'+inp.closest('.etc').dataset.etc] = inp.value; });
+    card.querySelectorAll('.scale button').forEach(b => b.onclick = () => { S.ans[id] = Number(b.dataset.v); card.classList.remove('bad'); card.querySelectorAll('.scale button').forEach(x=>x.classList.toggle('sel',x===b)); });
+    card.querySelectorAll('textarea').forEach(t => t.oninput = () => { S.ans[id] = t.value; });
+    card.querySelectorAll('.name').forEach(b => b.onclick = () => { S.ans[id] = b.dataset.v; card.classList.remove('bad'); card.querySelectorAll('.name').forEach(x=>x.classList.toggle('sel',x===b)); });
+  });
+  document.querySelectorAll('[data-a]').forEach(i => i.oninput = () => { S.alert[i.dataset.a] = i.dataset.a==='phone' ? fmtPhone(i) : i.value; });
+  document.querySelectorAll('[data-i]').forEach(i => {
+    const h = () => { S.iv[i.dataset.i] = i.dataset.i==='phone' ? fmtPhone(i) : i.value; };
+    if (i.tagName==='SELECT') i.onchange = h; else i.oninput = h;
+  });
+  document.querySelectorAll('[data-consent]').forEach(c => c.onchange = () => { (c.dataset.consent==='alert'?S.alert:S.iv).ok = c.checked; });
+  const det = document.querySelector('details.iv');
+  if (det) det.ontoggle = () => { S.iv.open = det.open; };
+  const want = $('#ivWant');
+  if (want) want.onchange = () => {
+    S.iv.want = want.checked; $('#ivForm').style.display = want.checked ? 'block' : 'none';
+    if (want.checked){ if(!S.iv.nick) S.iv.nick=S.alert.nick; if(!S.iv.phone) S.iv.phone=S.alert.phone; }
+  };
+  document.querySelectorAll('#ivWay .opt').forEach(b => b.onclick = () => {
+    const w=b.dataset.w, i=S.iv.way.indexOf(w); i>=0?S.iv.way.splice(i,1):S.iv.way.push(w); b.classList.toggle('sel');
+  });
+}
+function fmtPhone(inp){
+  const d = inp.value.replace(/\D/g,'').slice(0,11);
+  const v = d.length<4 ? d : d.length<8 ? d.slice(0,3)+'-'+d.slice(3) : d.slice(0,3)+'-'+d.slice(3,d.length-4)+'-'+d.slice(-4);
+  inp.value = v; return v;
+}
+const phoneOk = p => /^01[016789]-?\d{3,4}-?\d{4}$/.test(p||'');
+
+function check(){
+  const key = flow()[S.idx], pg = P[key];
+  if (!pg.qs) return true;
+  let first = null;
+  pg.qs.forEach(id => {
+    const q = Q[id]; if (!vis(id) || !q.req) return;
+    const v = S.ans[id];
+    let ok = q.type==='multi' ? (v && v.length) : (v!==undefined && v!=='');
+    // 기타 입력칸 필수
+    if (ok && (q.type==='single'||q.type==='multi')){
+      const chosen = q.type==='single' ? [v] : v;
+      q.opts.map(ot).forEach(o => { if (o.input && chosen.includes(o.t) && o.t==='기타' && !(S.etc[id+'|'+o.t]||'').trim()) ok = false; });
+    }
+    const card = document.querySelector(`[data-q="${id}"]`);
+    if (!ok){ card.classList.add('bad'); const e=card.querySelector('.q-err'); e.textContent = v&&v.length?'「기타」 내용을 적어 주세요.':'답을 골라 주세요.'; first = first||card; }
+  });
+  if (key==='C_2' && S.ans.C5==='네, 받을게요'){
+    const box = document.querySelector('[data-q="alertBox"]'), e = $('#alertErr');
+    let msg = '';
+    if (!S.alert.nick.trim()) msg='닉네임을 적어 주세요.';
+    else if (!phoneOk(S.alert.phone)) msg='휴대전화 번호를 확인해 주세요.';
+    else if (!S.alert.ok) msg='알림을 받으시려면 개인정보 동의가 필요해요. 원하지 않으시면 위에서 「괜찮아요」를 골라 주세요.';
+    if (msg){ box.classList.add('bad'); e.textContent=msg; first=first||box; } else box.classList.remove('bad');
+  }
+  if (key==='C_3' && S.iv.want){
+    const e = $('#ivErr'); let msg='';
+    if (!(S.iv.nick||'').trim()) msg='닉네임을 적어 주세요.';
+    else if (!phoneOk(S.iv.phone)) msg='휴대전화 번호를 확인해 주세요.';
+    else if (!S.iv.region) msg='지역을 골라 주세요.';
+    else if (!S.iv.way.length) msg='편한 인터뷰 방식을 골라 주세요.';
+    else if (!S.iv.ok) msg='인터뷰 신청에는 개인정보 동의가 필요해요. 원하지 않으시면 「인터뷰 참여를 신청합니다」 체크를 풀어 주세요.';
+    if (msg){ e.textContent=msg; e.style.display='block'; first=first||e; } else e.style.display='none';
+  }
+  if (first){ first.scrollIntoView({behavior:'smooth',block:'center'}); return false; }
+  return true;
+}
+
+/* ───────── 보내기 ───────── */
+function val(id){
+  const q=Q[id]; if (!vis(id)) return '';
+  const v=S.ans[id]; if (v===undefined) return '';
+  if (id==='role' && v.startsWith('임상가')) return '임상가';
+  if (q.type==='single'){ const e=S.etc[id+'|'+v]; return e&&e.trim() ? `${v}: ${e.trim()}` : v; }
+  return v;
+}
+function asked(id){
+  if (!vis(id)) return false;
+  const r=S.ans.role||'';
+  if (id[0]==='A') return r==='학생';
+  if (id[0]==='B') return r.startsWith('임상가');
+  return true;
+}
+function buildMain(){
+  const pairs = [['응답ID',S.id],['시각',new Date().toLocaleString('sv-SE',{timeZone:'Asia/Seoul'})]];
+  Object.keys(Q).forEach(id => {
+    const q=Q[id], on=asked(id);
+    if (q.type==='multi'){
+      const sel = S.ans[id]||[];
+      q.opts.map(ot).forEach(o => {
+        pairs.push([`${q.col}: ${o.t}`, on ? (sel.includes(o.t)?1:0) : '']);
+        if (o.input) pairs.push([`${q.col}: ${o.t} (적은 내용)`, on && sel.includes(o.t) ? (S.etc[id+'|'+o.t]||'').trim() : '']);
+      });
+    } else pairs.push([q.col, on ? val(id) : '']);
+  });
+  pairs.push(['인터뷰 신청', S.iv.want && S.iv.ok ? '예' : '아니오']);
+  pairs.push(['기기', /Mobi|Android|iPhone/i.test(navigator.userAgent) ? '모바일' : 'PC']);
+  pairs.push(['유입', new URLSearchParams(location.search).get('from') || '']);
+  return pairs;
+}
+function payload(){
+  const role = (S.ans.role||'').startsWith('임상가') ? '임상가' : (S.ans.role==='학생' ? '학생' : '기타');
+  const d = { id:S.id, main:buildMain() };
+  if (S.ans.C5==='네, 받을게요' && S.alert.ok) d.alert = [['시각',new Date().toLocaleString('sv-SE',{timeZone:'Asia/Seoul'})],['응답ID',S.id],['닉네임',S.alert.nick.trim()],['연락처',S.alert.phone],['구분',role],['동의','예']];
+  if (S.iv.want && S.iv.ok){
+    d.iv = [['시각',new Date().toLocaleString('sv-SE',{timeZone:'Asia/Seoul'})],['응답ID',S.id],['닉네임',S.iv.nick.trim()],['연락처',S.iv.phone],['구분',role],
+      ['직군·학과', role==='학생' ? val('A3') : role==='임상가' ? val('B1') : val('role')],
+      ['학년·연차', role==='학생' ? val('A2') : role==='임상가' ? val('B2') : ''],
+      ['근무 기관', role==='임상가' ? val('B3') : ''],
+      ['지역',S.iv.region],['편한 방식',S.iv.way.join(', ')],['동의','예']];
+  }
+  return d;
+}
+function jsonp(url){
+  return new Promise((res,rej)=>{
+    const cb='cb_'+Date.now()+'_'+Math.floor(Math.random()*1e5), s=document.createElement('script');
+    const t=setTimeout(()=>{clean();rej(new Error('timeout'))},15000);
+    function clean(){clearTimeout(t);try{delete window[cb]}catch(e){window[cb]=undefined}s.remove();}
+    window[cb]=d=>{clean();res(d)};
+    s.onerror=()=>{clean();rej(new Error('net'))};
+    s.src=url+(url.includes('?')?'&':'?')+'callback='+cb;
+    document.body.appendChild(s);
+  });
+}
+const sleep = ms => new Promise(r=>setTimeout(r,ms));
+async function send(){
+  const btn=$('#next'); btn.disabled=true; btn.textContent='보내는 중…';
+  const body = JSON.stringify(payload());
+  try{
+    for (let attempt=0; attempt<2; attempt++){
+      await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body});
+      for (let k=0;k<3;k++){
+        await sleep(1500);
+        try{ const r = await jsonp(`${SCRIPT_URL}?action=check&id=${encodeURIComponent(S.id)}`); if (r && r.found){ S.idx = flow().length-1; render(); window.scrollTo(0,0); return; } }catch(e){}
+      }
+    }
+    throw new Error('not confirmed');
+  }catch(e){
+    btn.disabled=false; btn.textContent='다시 제출하기';
+    toast('전송이 확인되지 않았어요. 잠시 후 다시 눌러 주세요.');
+  }
+}
+
+$('#next').onclick = () => {
+  const f=flow();
+  if (!check()) return;
+  if (f[S.idx]==='C_3'){ send(); return; }
+  S.idx = Math.min(S.idx+1, f.length-1); render(); window.scrollTo(0,0);
+};
+$('#prev').onclick = () => { S.idx = Math.max(S.idx-1,0); render(); window.scrollTo(0,0); };
+render();
+</script>
+</body>
+</html>
