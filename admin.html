@@ -56,6 +56,15 @@ th{color:var(--sub);font-weight:600;border-top:0}
 .note{font-size:12.5px;color:var(--mute);margin-top:10px}
 .days .row{grid-template-columns:5.5em 1fr 5.6em}
 @media (max-width:420px){.grid{grid-template-columns:1fr}}
+.jobs th.r,.jobs td.r{text-align:right;font-variant-numeric:tabular-nums}
+.jobs td small{color:var(--mute);font-size:12px}
+.jobs th,.jobs td{white-space:nowrap}
+@media (max-width:520px){.jobs th:nth-child(2),.jobs td:nth-child(2){display:none}.jobs th,.jobs td{padding:9px 5px}}
+.jobs tfoot td{font-weight:700;border-top:2px solid var(--line)}
+.stack{display:flex;height:12px;background:#F1EEE7;border-radius:99px;overflow:hidden;min-width:80px}
+.stack .s{background:var(--warm)}.stack .c{background:var(--acc)}
+.lg{font-weight:500;color:var(--sub);font-size:12.5px;display:inline-flex;gap:6px;align-items:center}
+.lg i{display:inline-block;width:10px;height:10px;border-radius:3px}.lg i.s{background:var(--warm)}.lg i.c{background:var(--acc);margin-left:6px}
 </style>
 </head>
 <body>
@@ -119,6 +128,9 @@ function draw(){
   </div>
   <div class="tabs">${['전체','학생','임상가','기타'].map(t=>`<button class="${FILTER===t?'on':''}" data-f="${t}">${t}</button>`).join('')}</div>`;
 
+  // 직군별 (학생 학과 + 임상가 직군을 한 표로)
+  h += jobTable(H, all);
+
   // 날짜별
   const byDay = {};
   rows.forEach(r=>{ const d=(r[H.indexOf('시각')]||'').slice(0,10); if(d) byDay[d]=(byDay[d]||0)+1; });
@@ -162,6 +174,36 @@ function draw(){
   $('#csv').onclick = ()=>csv(H, rows);
 }
 
+const DEPT2JOB = {'물리치료':'물리치료사','작업치료':'작업치료사','임상병리':'임상병리사','방사선':'방사선사','치위생':'치과위생사','치기공':'치과기공사','언어치료(재활)':'언어재활사','안경광학':'안경사','보건의료정보':'보건의료정보관리사'};
+const JOB_ORDER = ['물리치료사','작업치료사','임상병리사','방사선사','치과위생사','치과기공사','언어재활사','안경사','보건의료정보관리사','기타'];
+function jobTable(H, all){
+  const iA = H.indexOf('A3 학과'), iB = H.indexOf('B1 직군');
+  const t = {}; const etc = [];
+  JOB_ORDER.forEach(j => t[j] = {학생:0, 임상가:0});
+  all.forEach(r => {
+    const role = roleOf(r,H);
+    let v = '';
+    if (role==='학생' && iA>=0) v = r[iA]; else if (role==='임상가' && iB>=0) v = r[iB];
+    if (!v) return;
+    let job = role==='학생' ? (DEPT2JOB[v]||'') : v;
+    if (!job || /^기타/.test(v)){ job='기타'; const m=v.match(/^기타: (.+)/); if (m) etc.push(`${m[1]} (${role})`); }
+    if (!t[job]) t[job] = {학생:0, 임상가:0};
+    t[job][role]++;
+  });
+  const rows = Object.entries(t).map(([j,c]) => [j, c.학생, c.임상가, c.학생+c.임상가]).filter(x => x[3]>0).sort((a,b)=>(a[0]==='기타')-(b[0]==='기타') || b[3]-a[3]);
+  const sum = rows.reduce((s,x)=>s+x[3],0), max = Math.max(1,...rows.map(x=>x[3]));
+  let h = `<h2>직군별 응답</h2><div class="card">`;
+  if (!rows.length) return h + `<p class="empty">아직 응답이 없습니다.</p></div>`;
+  h += `<div class="tbl"><table class="jobs"><thead><tr><th>직군</th><th style="width:40%"></th><th class="r">학생</th><th class="r">임상가</th><th class="r">합계</th></tr></thead><tbody>`;
+  rows.forEach(([j,s,c,n]) => {
+    h += `<tr><td><b>${esc(j)}</b></td><td><div class="stack"><span class="s" style="width:${s/max*100}%"></span><span class="c" style="width:${c/max*100}%"></span></div></td><td class="r">${s}</td><td class="r">${c}</td><td class="r"><b>${n}</b> <small>${Math.round(n/sum*100)}%</small></td></tr>`;
+  });
+  const S = rows.reduce((a,x)=>a+x[1],0), C = rows.reduce((a,x)=>a+x[2],0);
+  h += `</tbody><tfoot><tr><td>합계</td><td><span class="lg"><i class="s"></i>학생 <i class="c"></i>임상가</span></td><td class="r">${S}</td><td class="r">${C}</td><td class="r"><b>${sum}</b></td></tr></tfoot></table></div>`;
+  if (etc.length){ const cnt={}; etc.forEach(x=>cnt[x]=(cnt[x]||0)+1); h += `<p class="n" style="margin:12px 0 6px">「기타」로 적은 직군</p><ul class="texts">${Object.entries(cnt).sort((a,b)=>b[1]-a[1]).map(([x,n])=>`<li>${esc(x)}<small>${n}명</small></li>`).join('')}</ul>`; }
+  h += `<p class="note">학생은 학과, 임상가는 직군 답으로 셉니다. 「기타 상황」으로 답한 분은 빠집니다.</p></div>`;
+  return h;
+}
 function bars(list, base){
   const max = Math.max(1,...list.map(x=>x[1]));
   return list.map(([lb,v])=>`<div class="row"><span class="lb" title="${esc(lb)}">${esc(lb)}</span><span class="tr"><div style="width:${v/max*100}%"></div></span><span class="v"><b>${v}</b>${base?` · ${Math.round(v/base*100)}%`:''}</span></div>`).join('');
