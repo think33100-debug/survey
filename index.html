@@ -170,6 +170,8 @@ details.iv .body{padding:0 18px 18px}
 .ok.small{flex:0 0 36px;width:36px;height:36px;border-radius:50%;background:#fff;display:grid;place-items:center}
 .ok.small::after{content:"";width:13px;height:7px;border:3px solid var(--acc);border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-2px)}
 .done{padding:28px 6px 10px}
+.chips span.gift{background:var(--warm);color:#fff;font-weight:700}
+input.line{width:100%}
 </style>
 </head>
 <body>
@@ -191,14 +193,16 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyGBmsVgM05Vu7_9bTUL
 /* ───────── 보기 목록 ───────── */
 const DEPTS = ['물리치료','작업치료','임상병리','방사선','치위생','치기공','언어치료(재활)','안경광학','보건의료정보',{t:'기타',input:'학과를 적어 주세요'}];
 const JOBS  = ['물리치료사','작업치료사','임상병리사','방사선사','치과위생사','치과기공사','언어재활사','안경사','보건의료정보관리사',{t:'기타',input:'직군을 적어 주세요'}];
-const ORG_PUBLIC = {t:'공공기관', sub:'예: 한국보훈복지의료공단, 근로복지공단, 국민건강보험공단, 도로교통공단, 지방의료원 등'};
+const ORG_PUBLIC = {t:'공공기관 및 소속 병원', sub:'예: 한국보훈복지의료공단, 근로복지공단, 국민건강보험공단, 도로교통공단, 지방의료원 등'};
 const ORGS_BASE = ['상급종합·대학병원','종합병원',ORG_PUBLIC,{t:'국공립병원',sub:'국립·시립·도립 등'},'재활병원','요양병원','한방병원','의원·클리닉','보건소·치매안심센터','복지관·발달센터','연구·교육·기업'];
 const PATHS = ['학교 게시판·교수님','선배·동기','카톡 오픈채팅','인스타·유튜브 등 SNS','직군 카페·커뮤니티',
   {t:'채용 사이트',input:'어떤 사이트를 이용하셨나요?',soft:'부담 갖지 마시고 편하게 적어 주세요. 기억나는 만큼만 괜찮아요.'},
   '병원 홈페이지','공공기관 채용 사이트','협회 홈페이지',
   {t:'기타',input:'어디서 찾으셨나요?',soft:'편하게 적어 주세요.'}];
 const PAINS = ['공고가 여기저기 흩어져 있어요','연봉을 알 수 없어요','업무 강도를 알 수 없어요','마감을 자주 놓쳐요','내 직군 공고를 찾기 어려워요',{t:'기타',input:'편하게 적어 주세요'}];
-const FEATS = ['채용 공고 자동 모음','병원 후기','직군별 커뮤니티','청년정책·지원 정보','교육·세미나 소식'];
+const FEATS = ['전국 병원 채용공고 실시간 업데이트','병원 후기',
+  {t:'익명 커뮤니티', disp:()=> roleShort()==='학생' ? '익명 학생 커뮤니티' : '직군별 익명 커뮤니티'},
+  '청년정책·지원 정보','학회 및 개인 교육 모음과 후기','병원별 인원 및 업무 강도 예측','내 연봉을 남들과 비교하기'];
 const NAMES = [
   {t:'라포', en:'Rapport', d:'치료는 신뢰에서 시작합니다. 환자와 치료사, 선배와 후배, 동료 사이에 쌓이는 믿음을 담았습니다. 치료사라면 학교에서 가장 먼저 배우는 말이기도 합니다.'},
   {t:'손잡', en:'', d:'「손을 잡다」에서 왔습니다. 치료사의 손이 환자의 일상을 붙잡아 주듯, 사람과 일자리를 이어 준다는 뜻입니다.'},
@@ -209,6 +213,8 @@ const NAMES = [
 
 /* ───────── 문항 ───────── */
 const Q = {
+  nick:{col:'닉네임',type:'line',label:'닉네임을 적어 주세요',help:'실명이 아니어도 괜찮아요. 비워 두셔도 됩니다.',ph:'예: 재활하는 곰'},
+  sex:{col:'성별',type:'single',label:'성별을 알려 주세요',req:1,cols:2,opts:['남성','여성','답하지 않음']},
   role:{col:'구분',type:'single',label:'지금 어떤 상황이신가요?',req:1,opts:['학생','임상가 (현직 치료사·의료기사)',{t:'기타',sub:'휴직·졸업 후 준비 중 등',input:'지금 상황을 간단히 적어 주세요'}]},
 
   A1:{col:'A1 나이',type:'single',label:'나이를 알려 주세요',req:1,cols:2,opts:['20~21세','22~23세','24~25세','26세 이상']},
@@ -225,23 +231,24 @@ const Q = {
   B3:{col:'B3 근무 기관',type:'single',label:'지금 근무하시는 기관은 어디인가요?',req:1,opts:[...ORGS_BASE,{t:'기타',input:'편하게 적어 주세요'}]},
   B4:{col:'B4 이직 생각',type:'single',label:'이직 생각이 있으신가요?',req:1,opts:['지금 알아보고 있어요','6개월 안에 할 것 같아요','1년 안에 할 것 같아요','1~2년 안에 할 것 같아요','2~3년 안에 할 것 같아요','당분간 없어요']},
   B5:{col:'B5 찾는 경로',type:'multi',label:'채용 공고는 주로 어디서 찾으시나요?',help:'해당하는 것을 모두 골라 주세요.',req:1,opts:PATHS},
-  B6:{col:'B6 이직 시 알고 싶은 것',type:'multi',max:2,label:'이직할 때 가장 알고 싶은 것은 무엇인가요?',help:'최대 2개까지 고를 수 있어요.',req:1,opts:['연봉','업무 강도 (하루 환자 수)','조직 분위기','교육·성장','워라밸','치료 환경']},
+  B6:{col:'B6 이직 시 알고 싶은 것',type:'multi',max:3,label:'이직할 때 가장 알고 싶은 것은 무엇인가요?',help:'최대 3개까지 고를 수 있어요.',req:1,opts:['연봉','업무 강도 (하루 환자 수)','조직 분위기','교육·성장','워라밸','치료 환경']},
   B7:{col:'B7 불편했던 점',type:'multi',max:3,label:'채용 정보를 찾을 때 불편한 점은 무엇인가요?',help:'최대 3개까지 고를 수 있어요.',req:1,opts:PAINS},
 
-  C2:{col:'C2 기대 기능',type:'multi',max:2,label:'가장 기대되는 기능을 골라 주세요',help:'최대 2개까지 고를 수 있어요.',req:1,opts:FEATS},
+  C2:{col:'C2 기대 기능',type:'multi',max:3,label:'가장 기대되는 기능을 골라 주세요',help:'최대 3개까지 고를 수 있어요.',req:1,opts:FEATS},
   C3:{col:'C3 추가 기능 (주관식)',type:'text',label:'이런 기능도 있었으면 좋겠다, 하는 것이 있으신가요?',help:'편하게 적어 주세요. 비워 두셔도 괜찮아요.'},
   C4:{col:'C4 사용 의향',type:'single',label:'앱이 나오면 사용해 보실 의향이 있으신가요?',req:1,cols:2,opts:['있어요','없어요']},
+  C5b:{col:'C5 커피 추첨 응모',type:'single',label:'커피 추첨에 응모하시겠어요?',help:'11월 20일까지 응답하신 분 중 연락처를 남겨 주신 분께 무작위로 30명을 뽑아 커피를 보내 드려요.',req:1,cols:2,opts:['네, 응모할게요','괜찮아요']},
   C5:{col:'C5 출시 알림 신청',type:'single',label:'출시 소식을 문자로 받아 보시겠어요?',help:'앱이 나오면 가장 먼저 알려 드릴게요.',req:1,cols:2,opts:['네, 받을게요','괜찮아요']},
   C6:{col:'C6 앱 이름',type:'name',label:'앱 이름으로 가장 마음에 드는 것을 골라 주세요',req:1},
   C7:{col:'C7 하고 싶은 말 (주관식)',type:'text',label:'저희에게 하고 싶은 말씀이 있으시면 남겨 주세요',help:'응원, 아쉬운 점, 무엇이든 좋아요.'}
 };
 /* 이 문항의 답이 바뀌면 같은 쪽의 다른 칸이 나타나거나 사라짐 → 그때만 다시 그림 */
-const DEPENDS = {A6:1, C5:1};
+const DEPENDS = {A6:1, C5:1, C5b:1, role:1};
 
 /* 쪽 구성 */
 const P = {
   intro:{kind:'intro'},
-  role:{tag:'시작',title:'먼저 간단히 여쭤볼게요',qs:['role']},
+  role:{tag:'시작',title:'먼저 간단히 여쭤볼게요',qs:['nick','sex','role']},
   A_1:{tag:'학생',title:'학생이시군요, 반가워요',qs:['A1','A2','A3']},
   A_2:{tag:'학생',title:'취업 준비에 대해 여쭤볼게요',qs:['A4','A5']},
   A_3:{tag:'학생',title:'채용 정보, 어떻게 찾고 계신가요?',qs:['A6','A7','A8']},
@@ -249,7 +256,7 @@ const P = {
   B_2:{tag:'임상가',title:'이직과 채용 정보에 대해 여쭤볼게요',qs:['B4','B5']},
   B_3:{tag:'임상가',title:'조금만 더 여쭤볼게요',qs:['B6','B7']},
   C_1:{tag:'우리가 만드는 앱',title:'이런 앱을 준비하고 있어요',kind:'feat',qs:['C2','C3']},
-  C_2:{tag:'거의 다 왔어요',title:'사용해 보실 생각이 있으신가요?',kind:'alert',qs:['C4','C5']},
+  C_2:{tag:'거의 다 왔어요',title:'사용해 보실 생각이 있으신가요?',kind:'alert',qs:['C4','C5','C5b']},
   C_3:{tag:'마지막',title:'앱 이름을 함께 골라 주세요',qs:['C6','C7']},
   done:{kind:'done'}
 };
@@ -272,6 +279,7 @@ const esc = s => String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'
 const vis = id => !Q[id].show || Q[id].show(S.ans);
 const nowKST = () => new Date().toLocaleString('sv-SE',{timeZone:'Asia/Seoul'});
 function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toast.t); toast.t=setTimeout(()=>t.classList.remove('on'),2200); }
+function wantsContact(){ return S.ans.C5==='네, 받을게요' || S.ans.C5b==='네, 응모할게요'; }
 function roleShort(){ const r=S.ans.role||''; return r.startsWith('임상가')?'임상가':r==='학생'?'학생':'기타'; }
 
 /* ───────── 그리기 ───────── */
@@ -284,7 +292,7 @@ function render(anim=true){
     h += `<span class="sec-tag">${pg.tag}</span><h2>${pg.title}</h2>${leadFor(key)?`<p class="lead">${leadFor(key)}</p>`:'<div style="height:14px"></div>'}`;
     if (pg.kind==='feat') h += featHTML();
     pg.qs.forEach(id => { if (vis(id)) h += qHTML(id); });
-    if (pg.kind==='alert' && S.ans.C5==='네, 받을게요') h += alertHTML();
+    if (pg.kind==='alert' && wantsContact()) h += alertHTML();
   }
   $('#app').innerHTML = `<section class="page on${anim?' anim':''}">${h}</section>`;
   const total = f.length - 2, cur = Math.min(Math.max(S.idx-1,0), total);
@@ -303,11 +311,11 @@ function introHTML(){
   return `<div class="hero">
     <h1>치료사·의료기사의<br>채용 이야기를 들려주세요</h1>
     <p>학생과 임상가가 실제로 어떻게 일자리를 찾는지 듣고, 더 쓸모 있는 앱을 만들려고 합니다.</p>
-    <div class="chips"><span>약 3분</span><span>익명 응답</span><span>학생 · 임상가</span></div>
+    <div class="chips"><span>약 3분</span><span>익명 응답</span><span>학생 · 임상가</span><span class="gift">☕ 커피 30명 추첨</span></div>
   </div>
   <div class="meta"><span>소요 <b>약 3분</b></span><span>문항 <b>15개 안팎</b></span></div>
   <div class="card" style="margin-top:16px">
-    <p class="q-help" style="margin:0">응답은 통계로만 쓰이며, 개인을 알아볼 수 있는 정보는 묻지 않습니다. 출시 알림이나 인터뷰를 따로 신청하실 때만 닉네임과 연락처를 받습니다.</p>
+    <p class="q-help" style="margin:0">응답은 통계로만 쓰이며, 개인을 알아볼 수 있는 정보는 묻지 않습니다. 연락처는 출시 알림·커피 추첨·전화 미팅을 원하실 때만 따로 받습니다.</p>
   </div>
   <p class="foot">도전하는 사람들</p>`;
 }
@@ -315,11 +323,13 @@ function featHTML(){
   return `<div class="card">
     <p class="q-label">물리·작업치료사를 시작으로, 임상병리·방사선·치위생·언어재활 등 <b>의료기사 전반</b>을 위한 채용·커뮤니티 앱을 준비하고 있습니다.</p>
     <div class="feat">
-      <div><i>1</i><span><b>채용 공고 자동 모음</b><small>공공·대학병원 공고를 모아 모집인원·마감·연봉·고용형태를 한눈에</small></span></div>
+      <div><i>1</i><span><b>전국 병원 채용공고 실시간 업데이트</b><small>공공·대학병원 공고를 모아 모집인원·마감·연봉·고용형태를 한눈에</small></span></div>
       <div><i>2</i><span><b>병원 후기</b><small>급여·업무 강도·분위기 등 직접 일해 본 사람들의 이야기</small></span></div>
-      <div><i>3</i><span><b>직군별 커뮤니티</b><small>같은 일을 하는 사람들끼리 묻고 답하는 공간</small></span></div>
+      <div><i>3</i><span><b>${roleShort()==='학생'?'익명 학생 커뮤니티':'직군별 익명 커뮤니티'}</b><small>${roleShort()==='학생'?'같은 길을 준비하는 학생끼리 편하게 묻고 답하는 공간':'같은 일을 하는 사람들끼리 이름 없이 묻고 답하는 공간'}</small></span></div>
       <div><i>4</i><span><b>청년정책·지원 정보</b><small>취업·주거·자격 관련 청년 지원 정보를 한곳에</small></span></div>
-      <div><i>5</i><span><b>교육·세미나 소식</b><small>보수교육·학회·세미나 일정</small></span></div>
+      <div><i>5</i><span><b>학회 및 개인 교육 모음과 후기</b><small>보수교육·학회·개인 강의 일정과 들어 본 사람들의 후기</small></span></div>
+      <div><i>6</i><span><b>병원별 인원 및 업무 강도 예측</b><small>치료사 수·하루 환자 수 등으로 가늠해 보는 업무 강도</small></span></div>
+      <div><i>7</i><span><b>내 연봉을 남들과 비교하기</b><small>같은 직군·연차·지역과 견주어 보는 내 연봉</small></span></div>
     </div></div>`;
 }
 function qHTML(id){
@@ -333,12 +343,14 @@ function qHTML(id){
     h += `<div class="opts${q.cols?' cols2':''}">`;
     q.opts.map(ot).forEach(o => {
       const on = sel.includes(o.t);
-      h += `<button type="button" class="opt${multi?' multi':''}${on?' sel':''}${full&&!on?' dim':''}" data-v="${esc(o.t)}"><span class="mk"></span><span class="tx"><b>${esc(o.t)}</b>${o.sub?`<small>${esc(o.sub)}</small>`:''}</span></button>`;
+      h += `<button type="button" class="opt${multi?' multi':''}${on?' sel':''}${full&&!on?' dim':''}" data-v="${esc(o.t)}"><span class="mk"></span><span class="tx"><b>${esc(o.disp?o.disp():o.t)}</b>${o.sub?`<small>${esc(o.sub)}</small>`:''}</span></button>`;
       if (o.input) h += `<div class="etc${on?' on':''}" style="grid-column:1/-1" data-etc="${esc(o.t)}">${o.soft?`<p class="soft">${esc(o.soft)}</p>`:''}<input type="text" maxlength="200" placeholder="${esc(o.input)}" value="${esc(S.etc[id+'|'+o.t]||'')}"></div>`;
     });
     h += `</div>`;
   } else if (q.type==='scale'){
     h += `<div class="scale">${[1,2,3,4,5].map(n=>`<button type="button" data-v="${n}" class="${S.ans[id]==n?'sel':''}">${n}</button>`).join('')}</div><div class="scale-cap"><span>${q.lo}</span><span>${q.hi}</span></div>`;
+  } else if (q.type==='line'){
+    h += `<input type="text" class="line" maxlength="30" placeholder="${esc(q.ph||'')}" value="${esc(S.ans[id]||'')}">`;
   } else if (q.type==='text'){
     h += `<textarea maxlength="1000" placeholder="편하게 적어 주세요">${esc(S.ans[id]||'')}</textarea>`;
   } else if (q.type==='name'){
@@ -348,19 +360,22 @@ function qHTML(id){
   return h;
 }
 function consentHTML(kind){
-  const what = kind==='alert' ? '앱 출시 알림 문자 발송' : '전화 미팅(인터뷰) 대상자 선정 및 개별 연락';
+  const what = kind==='alert' ? [S.ans.C5==='네, 받을게요'?'앱 출시 알림 문자 발송':'', S.ans.C5b==='네, 응모할게요'?'커피 추첨 및 경품 발송':''].filter(Boolean).join(', ') : '전화 미팅(인터뷰) 대상자 선정 및 개별 연락';
   const items = kind==='alert' ? '닉네임, 휴대전화 번호' : '닉네임, 휴대전화 번호, 그리고 설문 답변 중 구분·직군(학과)·학년(연차)·근무 기관';
-  const keep = kind==='alert' ? '출시 알림 발송 후 6개월까지 보관 후 파기' : '전화 미팅 종료 후 6개월까지 보관 후 파기';
+  const keep = kind==='alert' ? (S.ans.C5==='네, 받을게요' ? '출시 알림 발송 후 6개월까지 보관 후 파기 (커피 추첨만 응모하신 경우 경품 발송 후 바로 파기)' : '경품 발송 후 바로 파기') : '전화 미팅 종료 후 6개월까지 보관 후 파기';
   const checked = kind==='alert' ? S.alert.ok : S.iv.ok;
   return `<div class="consent"><div class="doc"><b>개인정보 수집·이용 동의 (도전하는 사람들)</b><ul>
     <li>목적: ${what}</li><li>항목: ${items}</li><li>보관 기간: ${keep}</li>
     <li><b>위 목적 외의 다른 용도로는 사용하지 않으며, 제3자에게 제공하지 않습니다.</b></li>
-    <li>동의하지 않으셔도 됩니다. 동의하지 않으시면 ${kind==='alert'?'출시 알림만 받지 않으며, 설문은 그대로 제출하실 수 있습니다':'전화 미팅 신청만 접수되지 않습니다'}.</li></ul></div>
+    <li>동의하지 않으셔도 됩니다. 동의하지 않으시면 ${kind==='alert'?'출시 알림·커피 추첨만 빠지며, 설문은 그대로 제출하실 수 있습니다':'전화 미팅 신청만 접수되지 않습니다'}.</li></ul></div>
     <label class="chk"><input type="checkbox" data-consent="${kind}" ${checked?'checked':''}> 위 내용을 확인했고 동의합니다</label></div>`;
 }
 function alertHTML(){
-  return `<div class="card" data-q="alertBox"><p class="q-label">알림 받으실 연락처를 남겨 주세요</p><p class="q-help">실명이 아니어도 괜찮아요. 닉네임으로 적어 주세요.</p>
-    <div class="field"><label>닉네임</label><input type="text" data-a="nick" maxlength="30" placeholder="예: 재활하는 곰" value="${esc(S.alert.nick)}"></div>
+  const coffee = S.ans.C5b==='네, 응모할게요', rel = S.ans.C5==='네, 받을게요';
+  return `<div class="card" data-q="alertBox"><p class="q-label">연락받으실 번호를 남겨 주세요</p>
+    <p class="q-help">${[rel?'출시 소식':'' , coffee?'커피 추첨 결과':''].filter(Boolean).join('과 ')}를 이 번호로 보내 드려요.</p>
+    ${coffee?`<div class="notice" style="margin:0 0 4px"><b>커피 추첨 안내</b><br>· 기간: 11월 20일까지 응답하신 분 중<br>· 방법: 연락처를 남겨 주신 분 중 무작위 30명<br>· 발표: 11월 21일, 개별 문자로 발송<br>· 조건: 1인 1회, 중복 응답은 추첨에서 제외</div>`:''}
+    <div class="field"><label>닉네임</label><input type="text" data-a="nick" maxlength="30" placeholder="예: 재활하는 곰" value="${esc(S.alert.nick||S.ans.nick||'')}"></div>
     <div class="field"><label>휴대전화 번호</label><input type="tel" data-a="phone" inputmode="numeric" maxlength="13" placeholder="010-0000-0000" value="${esc(S.alert.phone)}"></div>
     ${consentHTML('alert')}<p class="q-err" id="alertErr"></p></div>`;
 }
@@ -380,7 +395,7 @@ function doneHTML(){
     h += `<div class="done"><div class="ok"></div>
       <h2>제출이 완료되었습니다</h2>
       <p class="warm">소중한 시간 내어 주셔서 정말 감사합니다.<br>여러분 덕분에 <b>의료기사를 위한 앱</b>에<br>한 걸음 더 가까워졌어요.</p>
-      <p>보내 주신 이야기 하나하나 꼼꼼히 읽고, 현장에서 정말 쓸모 있는 앱으로 만들겠습니다.${S.ans.C5==='네, 받을게요'&&S.alert.ok?'<br>출시되면 가장 먼저 문자로 알려 드릴게요.':''}</p>
+      <p>보내 주신 이야기 하나하나 꼼꼼히 읽고, 현장에서 정말 쓸모 있는 앱으로 만들겠습니다.${S.ans.C5==='네, 받을게요'&&S.alert.ok?'<br>출시되면 가장 먼저 문자로 알려 드릴게요.':''}${S.ans.C5b==='네, 응모할게요'&&S.alert.ok?'<br>커피 추첨 결과는 11월 21일에 문자로 알려 드릴게요.':''}</p>
       <div class="receipt-box"><span>접수 확인</span><b>${S.id}</b><small>${esc(S.send.at)} 접수</small></div>
       </div>`;
     h += ivHTML();
@@ -398,7 +413,7 @@ function ivHTML(){
       <div class="iv-pill"><span>전화 미팅</span><span>30분 내외</span><span>사례비 1만 원</span></div>
       <p style="margin:0 0 6px;font-size:14.5px">앱을 더 잘 만들기 위해 현장의 이야기를 직접 듣고 싶습니다. 지금 겪고 계신 상황과 채용 정보를 찾을 때의 경험을 전화로 편하게 여쭤보려고 합니다.</p>
       <p style="margin:0;font-size:14.5px">관심 있으신 분은 아래 신청서를 보내 주세요. 검토 후 선정된 분께 개별로 연락드리겠습니다.</p>
-      <div class="field"><label>닉네임</label><input type="text" data-i="nick" maxlength="30" placeholder="예: 재활하는 곰" value="${esc(S.iv.nick||S.alert.nick)}"></div>
+      <div class="field"><label>닉네임</label><input type="text" data-i="nick" maxlength="30" placeholder="예: 재활하는 곰" value="${esc(S.iv.nick||S.alert.nick||S.ans.nick||'')}"></div>
       <div class="field"><label>휴대전화 번호</label><input type="tel" data-i="phone" inputmode="numeric" maxlength="13" placeholder="010-0000-0000" value="${esc(S.iv.phone||S.alert.phone)}"></div>
       <p class="iv-carry">${roleShort()==='기타'?'지금 상황':'직군·'+(roleShort()==='학생'?'학년':'연차')} 등은 설문에 답해 주신 내용으로 함께 전달돼요. 다시 적지 않으셔도 됩니다.</p>
       ${consentHTML('iv')}
@@ -439,14 +454,14 @@ function bind(){
     });
     card.querySelectorAll('.etc input').forEach(inp => inp.oninput = () => { S.etc[id+'|'+inp.closest('.etc').dataset.etc] = inp.value; });
     card.querySelectorAll('.scale button').forEach(b => b.onclick = () => { S.ans[id] = Number(b.dataset.v); card.classList.remove('bad'); card.querySelectorAll('.scale button').forEach(x=>x.classList.toggle('sel',x===b)); });
-    card.querySelectorAll('textarea').forEach(t => t.oninput = () => { S.ans[id] = t.value; });
+    card.querySelectorAll('textarea, input.line').forEach(t => t.oninput = () => { S.ans[id] = t.value; });
     card.querySelectorAll('.name').forEach(b => b.onclick = () => { S.ans[id] = b.dataset.v; card.classList.remove('bad'); card.querySelectorAll('.name').forEach(x=>x.classList.toggle('sel',x===b)); });
   });
-  document.querySelectorAll('[data-a]').forEach(i => i.oninput = () => { S.alert[i.dataset.a] = i.dataset.a==='phone' ? fmtPhone(i) : i.value; });
+  document.querySelectorAll('[data-a]').forEach(i => i.oninput = () => { S.alert[i.dataset.a] = i.dataset.a==='phone' ? fmtPhone(i) : i.value; const b=document.querySelector('[data-q="alertBox"]'); if(b) b.classList.remove('bad'); });
   document.querySelectorAll('[data-i]').forEach(i => i.oninput = () => { S.iv[i.dataset.i] = i.dataset.i==='phone' ? fmtPhone(i) : i.value; const e=$('#ivErr'); if(e) e.style.display='none'; });
-  document.querySelectorAll('[data-consent]').forEach(c => c.onchange = () => { (c.dataset.consent==='alert'?S.alert:S.iv).ok = c.checked; const e=$('#ivErr'); if(e && c.dataset.consent==='iv') e.style.display='none'; });
+  document.querySelectorAll('[data-consent]').forEach(c => c.onchange = () => { (c.dataset.consent==='alert'?S.alert:S.iv).ok = c.checked; if(c.dataset.consent==='alert'){ const b=document.querySelector('[data-q="alertBox"]'); if(b) b.classList.remove('bad'); } const e=$('#ivErr'); if(e && c.dataset.consent==='iv') e.style.display='none'; });
   const det = document.querySelector('details.iv');
-  if (det) det.ontoggle = () => { if (det.open){ S.iv.want = true; if(!S.iv.nick) S.iv.nick=S.alert.nick; if(!S.iv.phone) S.iv.phone=S.alert.phone; } };
+  if (det) det.ontoggle = () => { if (det.open){ S.iv.want = true; if(!S.iv.nick) S.iv.nick=S.alert.nick||S.ans.nick||''; if(!S.iv.phone) S.iv.phone=S.alert.phone; } };
   const ivb = $('#ivSend'); if (ivb) ivb.onclick = sendIv;
   const rt = $('#retry'); if (rt) rt.onclick = send;
 }
@@ -473,12 +488,11 @@ function check(){
     const card = document.querySelector(`[data-q="${id}"]`);
     if (!ok){ card.classList.add('bad'); card.querySelector('.q-err').textContent = etcMiss?'「기타」 내용을 적어 주세요.':'답을 골라 주세요.'; first = first||card; }
   });
-  if (key==='C_2' && S.ans.C5==='네, 받을게요'){
+  if (key==='C_2' && wantsContact()){
     const box = document.querySelector('[data-q="alertBox"]'), e = $('#alertErr');
     let msg = '';
-    if (!S.alert.nick.trim()) msg='닉네임을 적어 주세요.';
-    else if (!phoneOk(S.alert.phone)) msg='휴대전화 번호를 확인해 주세요.';
-    else if (!S.alert.ok) msg='알림을 받으시려면 개인정보 동의가 필요해요. 원하지 않으시면 위에서 「괜찮아요」를 골라 주세요.';
+    if (!phoneOk(S.alert.phone)) msg='휴대전화 번호를 확인해 주세요.';
+    else if (!S.alert.ok) msg='번호를 남기시려면 개인정보 동의가 필요해요. 원하지 않으시면 위에서 「괜찮아요」를 골라 주세요.';
     if (msg){ box.classList.add('bad'); e.textContent=msg; first=first||box; } else box.classList.remove('bad');
   }
   if (first){ first.scrollIntoView({behavior:'smooth',block:'center'}); return false; }
@@ -512,13 +526,17 @@ function buildMain(){
       });
     } else pairs.push([q.col, on ? val(id) : '']);
   });
+  const sec = S.t0 ? Math.round((Date.now()-S.t0)/1000) : '';
+  pairs.push(['소요(초)', sec]);
+  pairs.push(['응답 품질', sec!=='' && sec<30 ? '확인 필요(30초 미만)' : '정상']);
   pairs.push(['기기', /Mobi|Android|iPhone/i.test(navigator.userAgent) ? '모바일' : 'PC']);
   pairs.push(['유입', new URLSearchParams(location.search).get('from') || '']);
   return pairs;
 }
 function payload(){
   const d = { kind:'main', id:S.id, main:buildMain() };
-  if (S.ans.C5==='네, 받을게요' && S.alert.ok) d.alert = [['시각',nowKST()],['응답ID',S.id],['닉네임',S.alert.nick.trim()],['연락처',S.alert.phone],['구분',roleShort()],['동의','예']];
+  if (wantsContact() && S.alert.ok) d.alert = [['시각',nowKST()],['응답ID',S.id],['닉네임',(S.alert.nick||S.ans.nick||'').trim()],['연락처',S.alert.phone],['구분',roleShort()],
+    ['출시 알림', S.ans.C5==='네, 받을게요'?'예':'아니오'],['커피 추첨', S.ans.C5b==='네, 응모할게요'?'예':'아니오'],['동의','예']];
   return d;
 }
 function ivPayload(){
@@ -576,6 +594,7 @@ $('#next').onclick = () => {
   const f=flow();
   if (!check()) return;
   if (f[S.idx]==='C_3'){ send(); return; }
+  if (f[S.idx]==='intro' && !S.t0) S.t0 = Date.now();
   S.idx = Math.min(S.idx+1, f.length-1); render(); window.scrollTo(0,0);
 };
 $('#prev').onclick = () => { S.idx = Math.max(S.idx-1,0); render(); window.scrollTo(0,0); };
