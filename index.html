@@ -259,7 +259,7 @@ const Q = {
   C2:{col:'C2 기대 기능',type:'multi',max:3,label:'가장 기대되는 기능을 골라 주세요',help:'최대 3개까지 고를 수 있어요.',req:1,opts:FEATS},
   C3:{col:'C3 추가 기능 (주관식)',type:'text',label:'이런 기능도 있었으면 좋겠다, 하는 것이 있으신가요?',help:'편하게 적어 주세요. 비워 두셔도 괜찮아요.'},
   C4:{col:'C4 사용 의향',type:'single',label:'앱이 나오면 사용해 보실 의향이 있으신가요?',req:1,cols:2,opts:['있어요','없어요']},
-  C5b:{col:'C5 커피 추첨 응모',type:'single',label:'커피 추첨에 응모하시겠어요?',help:'11월 20일까지 응답하신 분 중 연락처를 남겨 주신 분께 무작위로 30명을 뽑아 커피를 보내 드려요.',req:1,cols:2,opts:['네, 응모할게요','괜찮아요']},
+  C5b:{col:'C5 커피 추첨 응모',type:'single',label:'커피 추첨에 응모하시겠어요?',help:'11월 20일까지 응답하신 분 중 연락처를 남겨 주신 분께 무작위로 100명을 뽑아 커피를 보내 드려요.',req:1,cols:2,opts:['네, 응모할게요','괜찮아요']},
   C5:{col:'C5 출시 알림 신청',type:'single',label:'출시 소식을 문자로 받아 보시겠어요?',help:'앱이 나오면 가장 먼저 알려 드릴게요.',req:1,cols:2,opts:['네, 받을게요','괜찮아요']},
   C6:{col:'C6 앱 이름',type:'name',label:'앱 이름으로 가장 마음에 드는 것을 골라 주세요',req:1},
   C7:{col:'C7 하고 싶은 말 (주관식)',type:'text',label:'저희에게 하고 싶은 말씀이 있으시면 남겨 주세요',help:'응원, 아쉬운 점, 무엇이든 좋아요.'}
@@ -334,7 +334,7 @@ function introHTML(){
   return `<div class="hero">
     <h1>치료사·의료기사의<br>채용 이야기를 들려주세요</h1>
     <p>학생과 임상가가 실제로 어떻게 일자리를 찾는지 듣고, 더 쓸모 있는 앱을 만들려고 합니다.</p>
-    <div class="chips"><span>약 3분</span><span>익명 응답</span><span>학생 · 임상가</span><span class="gift">☕ 커피 30명 추첨</span></div>
+    <div class="chips"><span>약 3분</span><span>익명 응답</span><span>학생 · 임상가</span><span class="gift">☕ 커피 100잔 추첨</span></div>
   </div>
   <div class="meta"><span>소요 <b>약 3분</b></span><span>문항 <b>15개 안팎</b></span></div>
   <div class="card" style="margin-top:16px">
@@ -398,7 +398,7 @@ function alertHTML(){
   const coffee = S.ans.C5b==='네, 응모할게요', rel = S.ans.C5==='네, 받을게요';
   return `<div class="card" data-q="alertBox"><p class="q-label">연락받으실 번호를 남겨 주세요</p>
     <p class="q-help">${[rel?'출시 소식':'' , coffee?'커피 추첨 결과':''].filter(Boolean).join('과 ')}를 이 번호로 보내 드려요.</p>
-    ${coffee?`<div class="notice" style="margin:0 0 4px"><b>커피 추첨 안내</b><br>· 기간: 11월 20일까지 응답하신 분 중<br>· 방법: 연락처를 남겨 주신 분 중 무작위 30명<br>· 발표: 11월 21일, 개별 문자로 발송<br>· 조건: 1인 1회, 중복 응답은 추첨에서 제외<br>· 운영: 주식회사 빈틈 · 문의는 화면 아래 「문의하기」</div>`:''}
+    ${coffee?`<div class="notice" style="margin:0 0 4px"><b>커피 추첨 안내</b><br>· 기간: 11월 20일까지 응답하신 분 중<br>· 방법: 연락처를 남겨 주신 분 중 무작위 100명<br>· 발표: 11월 21일, 개별 문자로 발송<br>· 조건: 1인 1회, 중복 응답은 추첨에서 제외<br>· 운영: 주식회사 빈틈 · 문의는 화면 아래 「문의하기」</div>`:''}
     <div class="field"><label>닉네임</label><input type="text" data-a="nick" maxlength="30" placeholder="예: 재활하는 곰" value="${esc(S.alert.nick||S.ans.nick||'')}"></div>
     <div class="field"><label>휴대전화 번호</label><input type="tel" data-a="phone" inputmode="numeric" maxlength="13" placeholder="010-0000-0000" value="${esc(S.alert.phone)}"></div>
     ${consentHTML('alert')}<p class="q-err" id="alertErr"></p></div>`;
