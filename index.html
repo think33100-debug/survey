@@ -172,6 +172,15 @@ details.iv .body{padding:0 18px 18px}
 .done{padding:28px 6px 10px}
 .chips span.gift{background:var(--warm);color:#fff;font-weight:700}
 input.line{width:100%}
+.ask-link{background:none;border:0;padding:0;color:var(--acc);text-decoration:underline;font-size:12px;cursor:pointer}
+.ask-bg{position:fixed;inset:0;background:rgba(20,25,23,.45);z-index:20;display:flex;align-items:flex-end;justify-content:center;padding:16px}
+.ask-bg[hidden]{display:none}
+.ask-box{background:#fff;border-radius:20px;width:100%;max-width:520px;padding:20px 18px 18px;box-shadow:0 10px 40px rgba(0,0,0,.2);margin-bottom:env(safe-area-inset-bottom)}
+.ask-head{display:flex;align-items:center;margin-bottom:10px}.ask-head b{font-size:17px}
+.ask-x{margin-left:auto;background:none;border:0;font-size:18px;cursor:pointer;color:var(--sub)}
+.ask-note{font-size:12px;color:var(--mute);margin:8px 0 0}
+#askErr{display:block}
+@media (min-width:600px){.ask-bg{align-items:center}}
 </style>
 </head>
 <body>
@@ -185,6 +194,19 @@ input.line{width:100%}
   <button class="btn pri" id="next" type="button">시작하기</button>
 </div></div>
 <div class="toast" id="toast"></div>
+<div class="ask-bg" id="askBg" hidden>
+  <div class="ask-box" role="dialog" aria-label="문의하기">
+    <div class="ask-head"><b>문의하기</b><button type="button" class="ask-x" onclick="closeAsk()" aria-label="닫기">✕</button></div>
+    <div id="askBody">
+      <p class="q-help" style="margin:0 0 10px">설문·추첨·전화 미팅 등 궁금한 점을 남겨 주세요. 확인 후 답변드리겠습니다.</p>
+      <textarea id="askText" maxlength="1000" placeholder="문의 내용을 적어 주세요"></textarea>
+      <div class="field"><label>답변 받으실 연락처 (선택)</label><input type="text" id="askReply" maxlength="60" placeholder="휴대전화 번호 또는 이메일"></div>
+      <p class="ask-note">답변 받으실 연락처는 이 문의에 답하는 데만 쓰고, 답변 후 파기합니다.</p>
+      <p class="q-err" id="askErr"></p>
+      <button type="button" class="btn pri" id="askSend" style="width:100%;margin-top:8px">보내기</button>
+    </div>
+  </div>
+</div>
 
 <script>
 /* ★ Apps Script 배포 후 받은 웹 앱 주소를 여기에 붙여 넣으세요 */
@@ -293,6 +315,7 @@ function render(anim=true){
     if (pg.kind==='feat') h += featHTML();
     pg.qs.forEach(id => { if (vis(id)) h += qHTML(id); });
     if (pg.kind==='alert' && wantsContact()) h += alertHTML();
+    h += '<p class="foot">도전하는 사람들 · <button type="button" class="ask-link" onclick="openAsk()">문의하기</button></p>';
   }
   $('#app').innerHTML = `<section class="page on${anim?' anim':''}">${h}</section>`;
   const total = f.length - 2, cur = Math.min(Math.max(S.idx-1,0), total);
@@ -317,7 +340,7 @@ function introHTML(){
   <div class="card" style="margin-top:16px">
     <p class="q-help" style="margin:0">응답은 통계로만 쓰이며, 개인을 알아볼 수 있는 정보는 묻지 않습니다. 연락처는 출시 알림·커피 추첨·전화 미팅을 원하실 때만 따로 받습니다.</p>
   </div>
-  <p class="foot">도전하는 사람들</p>`;
+  <p class="foot">도전하는 사람들 · <button type="button" class="ask-link" onclick="openAsk()">문의하기</button></p>`;
 }
 function featHTML(){
   return `<div class="card">
@@ -367,6 +390,7 @@ function consentHTML(kind){
   return `<div class="consent"><div class="doc"><b>개인정보 수집·이용 동의 (도전하는 사람들)</b><ul>
     <li>목적: ${what}</li><li>항목: ${items}</li><li>보관 기간: ${keep}</li>
     <li><b>위 목적 외의 다른 용도로는 사용하지 않으며, 제3자에게 제공하지 않습니다.</b></li>
+    <li>개인정보 처리 주체: 주식회사 빈틈 · 궁금한 점은 화면 아래 「문의하기」로 남겨 주세요</li>
     <li>동의하지 않으셔도 됩니다. 동의하지 않으시면 ${kind==='alert'?'출시 알림·커피 추첨만 빠지며, 설문은 그대로 제출하실 수 있습니다':'전화 미팅 신청만 접수되지 않습니다'}.</li></ul></div>
     <label class="chk"><input type="checkbox" data-consent="${kind}" ${checked?'checked':''}> 위 내용을 확인했고 동의합니다</label></div>`;
 }
@@ -374,7 +398,7 @@ function alertHTML(){
   const coffee = S.ans.C5b==='네, 응모할게요', rel = S.ans.C5==='네, 받을게요';
   return `<div class="card" data-q="alertBox"><p class="q-label">연락받으실 번호를 남겨 주세요</p>
     <p class="q-help">${[rel?'출시 소식':'' , coffee?'커피 추첨 결과':''].filter(Boolean).join('과 ')}를 이 번호로 보내 드려요.</p>
-    ${coffee?`<div class="notice" style="margin:0 0 4px"><b>커피 추첨 안내</b><br>· 기간: 11월 20일까지 응답하신 분 중<br>· 방법: 연락처를 남겨 주신 분 중 무작위 30명<br>· 발표: 11월 21일, 개별 문자로 발송<br>· 조건: 1인 1회, 중복 응답은 추첨에서 제외</div>`:''}
+    ${coffee?`<div class="notice" style="margin:0 0 4px"><b>커피 추첨 안내</b><br>· 기간: 11월 20일까지 응답하신 분 중<br>· 방법: 연락처를 남겨 주신 분 중 무작위 30명<br>· 발표: 11월 21일, 개별 문자로 발송<br>· 조건: 1인 1회, 중복 응답은 추첨에서 제외<br>· 운영: 주식회사 빈틈 · 문의는 화면 아래 「문의하기」</div>`:''}
     <div class="field"><label>닉네임</label><input type="text" data-a="nick" maxlength="30" placeholder="예: 재활하는 곰" value="${esc(S.alert.nick||S.ans.nick||'')}"></div>
     <div class="field"><label>휴대전화 번호</label><input type="tel" data-a="phone" inputmode="numeric" maxlength="13" placeholder="010-0000-0000" value="${esc(S.alert.phone)}"></div>
     ${consentHTML('alert')}<p class="q-err" id="alertErr"></p></div>`;
@@ -400,7 +424,7 @@ function doneHTML(){
       </div>`;
     h += ivHTML();
   }
-  h += `<p class="foot">도전하는 사람들</p>`;
+  h += `<p class="foot">도전하는 사람들 · <button type="button" class="ask-link" onclick="openAsk()">문의하기</button></p>`;
   return h;
 }
 function ivHTML(){
@@ -596,6 +620,21 @@ $('#next').onclick = () => {
   if (f[S.idx]==='C_3'){ send(); return; }
   if (f[S.idx]==='intro' && !S.t0) S.t0 = Date.now();
   S.idx = Math.min(S.idx+1, f.length-1); render(); window.scrollTo(0,0);
+};
+/* 문의하기 */
+function openAsk(){ $('#askBg').hidden=false; setTimeout(()=>$('#askText').focus(),50); }
+function closeAsk(){ $('#askBg').hidden=true; }
+$('#askBg').onclick = e => { if (e.target.id==='askBg') closeAsk(); };
+$('#askText').oninput = () => { $('#askErr').textContent=''; };
+$('#askSend').onclick = async () => {
+  const text = $('#askText').value.trim(), reply = $('#askReply').value.trim(), err = $('#askErr');
+  if (text.length < 2){ err.textContent='문의 내용을 적어 주세요.'; return; }
+  err.textContent=''; const b=$('#askSend'); b.disabled=true; b.textContent='보내는 중…';
+  const id = 'Q'+Date.now().toString(36).toUpperCase()+Math.random().toString(36).slice(2,5).toUpperCase();
+  const body = JSON.stringify({kind:'ask', id, ask:[['시각',nowKST()],['문의ID',id],['응답ID',S.id],['닉네임',S.ans.nick||''],['내용',text],['답변 연락처',reply]]});
+  const ok = await postAndConfirm(body,'ask',id);
+  if (ok){ $('#askBody').innerHTML='<p style="margin:6px 0 4px;font-weight:700">문의가 접수되었습니다</p><p class="q-help" style="margin:0">확인 후 답변드리겠습니다. 감사합니다.</p><button type="button" class="btn ghost" style="width:100%;margin-top:14px" onclick="closeAsk()">닫기</button>'; }
+  else { b.disabled=false; b.textContent='다시 보내기'; err.textContent='전송이 확인되지 않았어요. 잠시 후 다시 눌러 주세요.'; }
 };
 $('#prev').onclick = () => { S.idx = Math.max(S.idx-1,0); render(); window.scrollTo(0,0); };
 window.addEventListener('beforeunload', e => { if (S.send.state==='sending' || S.iv.state==='sending'){ e.preventDefault(); e.returnValue=''; } });
