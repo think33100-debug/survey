@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>피오티랩 휠체어 설문 관리자</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{--bg:#F5F3EE;--card:#fff;--ink:#1B2220;--sub:#66706C;--mute:#9AA29E;--line:#E5E1D8;--acc:#1F4A37;--acc-2:#2B6249;--acc-soft:#E6EFE8;--acc-ink:#163A2A;--lime:#D3EC6A;--lime-soft:#F3F9DA;--warm:#D98E2B;--warm-soft:#FBF1E2;--err:#C24A3A;color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Pretendard Variable",Pretendard,-apple-system,"Apple SD Gothic Neo",sans-serif;font-size:15px;line-height:1.55;word-break:keep-all}
+button,input,select{font:inherit;color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:20px 16px 60px}
+.brand{font-weight:800;letter-spacing:-.01em;font-size:15px;color:var(--acc-ink)}.brand i{font-style:normal;color:var(--acc-2);font-weight:600;margin-left:4px;font-size:13px}
+header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+header h1{font-size:20px;margin:0}
+header .sp{flex:1}
+.btn{border:0;border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer;background:#fff;box-shadow:inset 0 0 0 1.5px var(--line)}
+.btn.pri{background:var(--acc);color:#fff;box-shadow:none}
+a.btn{color:var(--ink)}
+.login{max-width:360px;margin:12vh auto 0;background:var(--card);border-radius:20px;padding:28px 24px;box-shadow:0 8px 28px rgba(20,30,25,.07);text-align:center}
+.login input{width:100%;text-align:center;font-size:22px;letter-spacing:.4em;padding:12px;border:1.5px solid var(--line);border-radius:12px;margin:16px 0 12px;outline:none}
+.login input:focus{border-color:var(--acc)}
+.login .btn{width:100%;padding:13px}
+.err{color:var(--err);font-size:13.5px;min-height:20px;margin-top:8px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 16px;align-items:center}
+.tabs button{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:7px 14px;font-weight:600;cursor:pointer;font-size:14px}
+.tabs button.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:10px}
+.kpi{background:var(--card);border-radius:16px;padding:16px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.kpi small{color:var(--sub);font-size:13px}
+.kpi b{display:block;font-size:28px;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-top:2px}
+.kpi.lime{background:var(--lime-soft)}
+.kpi.main{background:var(--acc);color:#fff}.kpi.main small{color:rgba(255,255,255,.75)}
+h2{font-size:16px;margin:26px 0 10px;color:var(--sub);font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+.card{background:var(--card);border-radius:16px;padding:18px 18px 14px;box-shadow:0 1px 2px rgba(0,0,0,.03);min-width:0}
+.card h3{font-size:15px;margin:0 0 2px}
+.card .n{font-size:12.5px;color:var(--mute);margin:0 0 12px}
+.row{display:grid;grid-template-columns:minmax(0,11em) 1fr 5.6em;gap:10px;align-items:center;margin:7px 0;font-size:13.5px}
+.row .lb{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .tr{height:10px;background:#F1EEE7;border-radius:99px;overflow:hidden}
+.row .tr div{height:100%;background:var(--acc);border-radius:99px}
+.row .v{white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums;color:var(--sub)}
+.row .v b{color:var(--ink)}
+.avg{font-size:13px;color:var(--sub);margin-top:8px}
+.texts{max-height:320px;overflow:auto;margin:0;padding:0;list-style:none}
+.texts li{font-size:13.5px;padding:9px 0;border-top:1px solid var(--line)}
+.texts li:first-child{border-top:0}
+.texts li small{color:var(--mute);margin-left:6px}
+.empty{color:var(--mute);font-size:13.5px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{text-align:left;padding:9px 8px;border-top:1px solid var(--line);white-space:nowrap}
+th{color:var(--sub);font-weight:600;border-top:0}
+th.r,td.r{text-align:right;font-variant-numeric:tabular-nums}
+tfoot td{font-weight:700;border-top:2px solid var(--line)}
+.tbl{overflow:auto}
+.note{font-size:12.5px;color:var(--mute);margin-top:10px}
+.days .row{grid-template-columns:5.5em 1fr 5.6em}
+.fast{margin-left:auto;font-size:13.5px;color:var(--sub);display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+.fast input{accent-color:var(--acc);width:16px;height:16px}
+@media (max-width:420px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <div class="login" id="login">
+    <div class="brand">피오티랩<i>POT LAB</i></div>
+    <h1 style="font-size:19px;margin:10px 0 0">휠체어 설문 관리자</h1>
+    <input type="password" id="pw" inputmode="numeric" maxlength="12" placeholder="••••" autocomplete="current-password">
+    <button class="btn pri" id="go">들어가기</button>
+    <div class="err" id="err"></div>
+  </div>
+</div>
+<script>
+/* ★ wheelchair.html 과 같은 웹 앱 주소 */
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyLUgSYAwpvSBxwYqivjRno-UR8YXOeJemKFqi--ypiqnyiRWwrNkQNQ-s74BN0oLaXkA/exec';
+
+/* 시트 칸 이름 (wheelchair.html 의 Q[*].col 과 같아야 함) */
+const COL = { role:'1 응답자 유형', exp:'3 위험 경험', need:'8 필요성', intent:'9 사용 의향', rel:'출시 알림 신청', raffle:'추첨 응모', time:'시각', quality:'응답 품질' };
+const ROLE_ORDER = ['의료인','의료기사','휠체어 사용자','보호자·가족','기타'];
+const EXP_YES = ['직접 경험한 적이 있다','다른 사람의 상황을 목격한 적이 있다','직접 경험과 목격 모두 있다'];
+const META = ['응답ID','시각','기기','유입','소요(초)','응답 품질'];   // 문항 카드로 안 그리는 칸
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let DATA=null, PW='', FILTER='전체', HIDE_FAST=true;
+
+function jsonp(url){
+  return new Promise((res,rej)=>{
+    const cb='cb_'+Date.now()+'_'+Math.floor(Math.random()*1e5), s=document.createElement('script');
+    const t=setTimeout(()=>{clean();rej(new Error('시간 초과'))},20000);
+    function clean(){clearTimeout(t);try{delete window[cb]}catch(e){window[cb]=undefined}s.remove();}
+    window[cb]=d=>{clean();res(d)}; s.onerror=()=>{clean();rej(new Error('연결 실패 — 웹 앱 주소·배포 상태를 확인하세요'))};
+    s.src=url+(url.includes('?')?'&':'?')+'callback='+cb; document.body.appendChild(s);
+  });
+}
+async function load(){
+  const r = await jsonp(`${SCRIPT_URL}?action=stats&pw=${encodeURIComponent(PW)}`);
+  if (!r.ok) throw new Error(r.err||'실패');
+  if (!r.main || !r.iv) throw new Error('서버 응답 형식이 다릅니다 — 웹 앱 주소를 확인하세요');
+  DATA = r;
+}
+$('#go').onclick = login;
+$('#pw').onkeydown = e => { if (e.key==='Enter') login(); };
+async function login(){
+  PW = $('#pw').value.trim(); $('#err').textContent='확인 중…';
+  try{ await load(); draw(); }catch(e){ $('#err').textContent=e.message; }
+}
+
+/* 응답자 유형: 「기타: 적은 내용」은 기타로 묶음 */
+function roleOf(r,H){
+  const v = r[H.indexOf(COL.role)] || '';
+  if (!v) return '';
+  return ROLE_ORDER.includes(v) ? v : '기타';
+}
+const pct = (a,b) => b ? Math.round(a/b*100)+'%' : '–';
+
+function draw(){
+  const H = DATA.main.header;
+  const ix = k => H.indexOf(COL[k]);
+  const iq = ix('quality');
+  const fastN = iq>=0 ? DATA.main.rows.filter(r=>/^확인 필요/.test(r[iq])).length : 0;
+  const all = (HIDE_FAST && iq>=0) ? DATA.main.rows.filter(r=>!/^확인 필요/.test(r[iq])) : DATA.main.rows;
+  const rows = FILTER==='전체' ? all : all.filter(r=>roleOf(r,H)===FILTER);
+  const cnt = k => all.filter(r=>roleOf(r,H)===k).length;
+  const yes = k => ix(k)>=0 ? all.filter(r=>/^네/.test(r[ix(k)])).length : 0;
+
+  let h = `<header><span class="brand">피오티랩<i>POT LAB</i></span><h1>휠체어 설문 통계</h1><span class="sp"></span>
+    <button class="btn" id="csv">CSV 받기</button><a class="btn" href="${esc(DATA.sheetUrl)}" target="_blank" rel="noopener" style="text-decoration:none">시트 열기</a><button class="btn pri" id="re">새로고침</button></header>
+  <div class="kpis">
+    <div class="kpi main"><small>전체 응답</small><b>${all.length}</b></div>
+    ${ROLE_ORDER.map(k=>`<div class="kpi"><small>${k}</small><b>${cnt(k)}</b></div>`).join('')}
+  </div>
+  <div class="kpis">
+    <div class="kpi lime"><small>연락처 남긴 사람</small><b>${DATA.alertCount}</b></div>
+    <div class="kpi lime"><small>커피 추첨 응모</small><b>${yes('raffle')}</b></div>
+    <div class="kpi lime"><small>출시 알림 신청</small><b>${yes('rel')}</b></div>
+    <div class="kpi lime"><small>체험·도입 상담 신청</small><b>${DATA.iv.rows.length}</b></div>
+    <div class="kpi lime"><small>문의</small><b>${DATA.askCount}</b></div>
+  </div>
+  <div class="tabs">${['전체',...ROLE_ORDER].map(t=>`<button class="${FILTER===t?'on':''}" data-f="${t}">${t}</button>`).join('')}
+    <label class="fast"><input type="checkbox" id="hideFast" ${HIDE_FAST?'checked':''}> 너무 빠른 응답 빼고 보기 <b>(${fastN}건)</b></label></div>`;
+
+  h += roleTable(H, all);
+
+  // 날짜별
+  const it = ix('time'), byDay = {};
+  rows.forEach(r=>{ const d=(r[it]||'').slice(0,10); if(d) byDay[d]=(byDay[d]||0)+1; });
+  const days = Object.keys(byDay).sort();
+  h += `<h2>날짜별 응답${FILTER==='전체'?'':' · '+esc(FILTER)}</h2><div class="card days">${days.length?bars(days.map(d=>[d.slice(5),byDay[d]]), rows.length):'<p class="empty">아직 응답이 없습니다.</p>'}</div>`;
+
+  // 문항 묶기: 「번호 제목: 보기」 꼴은 여러 개 선택 문항
+  const groups=[]; const seen={};
+  H.forEach((col,i)=>{
+    if (META.includes(col)) return;
+    let key=col, kind='single', opt=null;
+    const m = col.match(/^(\d+[A-C]? .+?): (.+)$/);
+    if (m){ key=m[1]; opt=m[2]; kind = / \(적은 내용\)$/.test(opt) ? 'multiText' : 'multi'; }
+    else if (/\(주관식\)$/.test(col)) kind='text';
+    if (!seen[key]){ seen[key]={key,kind:kind==='multiText'?'multi':kind,opts:[],texts:[],idx:i}; groups.push(seen[key]); }
+    const g=seen[key];
+    if (kind==='multi') g.opts.push([opt,i]);
+    else if (kind==='multiText') g.texts.push([opt.replace(/ \(적은 내용\)$/,''),i]);
+    else g.col=i, g.kind=kind;
+  });
+
+  let curSec='';
+  groups.forEach(g=>{
+    const s = secOf(g.key);
+    if (s!==curSec){ if(curSec) h+='</div>'; h+=`<h2>${s}</h2><div class="grid">`; curSec=s; }
+    h += card(g, rows);
+  });
+  if (curSec) h+='</div>';
+
+  // 체험·도입 상담 신청자
+  const IH = DATA.iv.header, IR = DATA.iv.rows, skip = ['응답ID','신청ID','동의'];
+  h += `<h2>시제품 체험·도입 상담 신청자 (${IR.length})</h2><div class="card tbl">`;
+  h += IR.length ? `<table><thead><tr>${IH.filter(c=>!skip.includes(c)).map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${IR.slice().reverse().map(r=>`<tr>${IH.map((c,i)=>skip.includes(c)?'':`<td>${esc(r[i])}</td>`).join('')}</tr>`).join('')}</tbody></table>` : '<p class="empty">아직 신청자가 없습니다.</p>';
+  h += `<p class="note">연락처는 이 화면에 표시하지 않습니다. 구글 시트의 「체험신청」 탭에서 확인하세요. 추첨·알림 연락처는 「알림·추첨」 탭, 문의 내용은 「문의」 탭에 있습니다.</p></div>`;
+  h += `<p class="note">불러온 시각 ${new Date(DATA.at).toLocaleString('ko-KR')}</p>`;
+
+  $('#app').innerHTML = h;
+  document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{FILTER=b.dataset.f;draw();});
+  const hf=$('#hideFast'); if(hf) hf.onchange=()=>{HIDE_FAST=hf.checked;draw();};
+  $('#re').onclick = async ()=>{ $('#re').textContent='불러오는 중…'; try{await load();}catch(e){alert(e.message)} draw(); };
+  $('#csv').onclick = ()=>csv(H, rows);
+}
+
+/* 문항 번호 → 묶음 제목 */
+function secOf(key){
+  const m = key.match(/^(\d+)([A-C]?) /);
+  if (!m) return '알림·추첨';
+  const n = Number(m[1]);
+  if (m[2]) return ({A:'의료인·의료기사에게만 물은 문항', B:'휠체어 사용자에게만 물은 문항', C:'보호자·가족에게만 물은 문항'})[m[2]];
+  if (n<=2) return '기본';
+  if (n<=5) return '브레이크 경험·확인 방법';
+  return '장치에 대한 생각';
+}
+
+/* 응답자 유형별 한눈에 보기 */
+function roleTable(H, all){
+  const iE=H.indexOf(COL.exp), iN=H.indexOf(COL.need), iI=H.indexOf(COL.intent);
+  let h = `<h2>응답자 유형별 요약</h2><div class="card">`;
+  if (!all.length) return h + `<p class="empty">아직 응답이 없습니다.</p></div>`;
+  const line = (name, rs, strong) => {
+    const n = rs.length;
+    const exp = iE>=0 ? rs.filter(r=>EXP_YES.includes(r[iE])).length : 0;
+    const needs = iN>=0 ? rs.map(r=>Number(r[iN])).filter(v=>v>=1&&v<=5) : [];
+    const avg = needs.length ? (needs.reduce((a,b)=>a+b,0)/needs.length).toFixed(2) : '–';
+    const need45 = needs.filter(v=>v>=4).length;
+    const want = iI>=0 ? rs.filter(r=>/^(적극적으로|조건이)/.test(r[iI])).length : 0;
+    const t = strong ? 'td' : 'td';
+    return `<tr><${t}><b>${esc(name)}</b></${t}><td class="r">${n}</td><td class="r">${pct(exp,n)} <small style="color:var(--mute)">${exp}명</small></td><td class="r"><b>${avg}</b></td><td class="r">${pct(need45,needs.length)}</td><td class="r">${pct(want,n)} <small style="color:var(--mute)">${want}명</small></td></tr>`;
+  };
+  h += `<div class="tbl"><table><thead><tr><th>응답자 유형</th><th class="r">응답</th><th class="r">위험 경험·목격</th><th class="r">필요성 평균(5점)</th><th class="r">필요 4~5점</th><th class="r">사용 의향 있음</th></tr></thead><tbody>`;
+  ROLE_ORDER.forEach(k => { const rs = all.filter(r=>roleOf(r,H)===k); if (rs.length) h += line(k, rs); });
+  h += `</tbody><tfoot>${line('전체', all, true)}</tfoot></table></div>`;
+  const etc = all.map(r=>r[H.indexOf(COL.role)]||'').filter(v=>/^기타: /.test(v)).map(v=>v.slice(4));
+  if (etc.length) h += `<p class="n" style="margin:12px 0 6px">「기타」로 적은 유형</p><ul class="texts">${etc.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`;
+  h += `<p class="note">위험 경험·목격 = 「직접 경험」「목격」「둘 다」를 고른 사람. 사용 의향 있음 = 「적극적으로」 또는 「조건이 적절하다면」을 고른 사람.</p></div>`;
+  return h;
+}
+function bars(list, base){
+  const max = Math.max(1,...list.map(x=>x[1]));
+  return list.map(([lb,v])=>`<div class="row"><span class="lb" title="${esc(lb)}">${esc(lb)}</span><span class="tr"><div style="width:${v/max*100}%"></div></span><span class="v"><b>${v}</b>${base?` · ${Math.round(v/base*100)}%`:''}</span></div>`).join('');
+}
+function card(g, rows){
+  const title = g.key.replace(/ \(주관식\)$/,'');
+  if (g.kind==='multi'){
+    const asked = rows.filter(r=>g.opts.some(([,i])=>r[i]!=='')); const n=asked.length;
+    const list = g.opts.map(([o,i])=>[o, asked.filter(r=>r[i]==='1').length]).sort((a,b)=>b[1]-a[1]);
+    let h = `<div class="card"><h3>${esc(title)}</h3><p class="n">물어본 사람 ${n}명 · 여러 개 선택</p>${n?bars(list,n):'<p class="empty">응답 없음</p>'}`;
+    g.texts.forEach(([o,i])=>{ const t=asked.map(r=>r[i]).filter(Boolean); if(t.length) h+=`<p class="n" style="margin:14px 0 6px">「${esc(o)}」에 적은 내용</p><ul class="texts">${t.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`; });
+    return h+'</div>';
+  }
+  if (g.kind==='text'){
+    const iT = DATA.main.header.indexOf(COL.time);
+    const t = rows.map(r=>[r[g.col], r[iT]]).filter(x=>x[0]);
+    return `<div class="card" style="grid-column:1/-1"><h3>${esc(title)}</h3><p class="n">${t.length}건</p>${t.length?`<ul class="texts">${t.reverse().map(([x,d])=>`<li>${esc(x)}<small>${esc(String(d||'').slice(5,16))}</small></li>`).join('')}</ul>`:'<p class="empty">아직 없음</p>'}</div>`;
+  }
+  // 단일 선택 / 척도
+  const vals = rows.map(r=>r[g.col]).filter(v=>v!=='' && v!==undefined);
+  const map = {}; vals.forEach(v=>{ const k=v.replace(/^(기타): .*/,'$1'); map[k]=(map[k]||0)+1; });
+  let list = Object.entries(map);
+  const isScale = list.length && list.every(([k])=>/^[1-5]$/.test(k));
+  if (isScale) list = [1,2,3,4,5].map(n=>[String(n), map[n]||0]); else list.sort((a,b)=>b[1]-a[1]);
+  let h = `<div class="card"><h3>${esc(title)}</h3><p class="n">응답 ${vals.length}명</p>${vals.length?bars(list,vals.length):'<p class="empty">응답 없음</p>'}`;
+  if (isScale && vals.length) h += `<p class="avg">평균 <b>${(vals.reduce((a,b)=>a+Number(b),0)/vals.length).toFixed(2)}</b> / 5</p>`;
+  const etc = vals.filter(v=>/^기타: /.test(v)).map(v=>v.slice(4));
+  if (etc.length) h += `<p class="n" style="margin:14px 0 6px">「기타」에 적은 내용</p><ul class="texts">${etc.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`;
+  return h+'</div>';
+}
+function csv(H, rows){
+  const q = v => /[",\n]/.test(v) ? `"${String(v).replace(/"/g,'""')}"` : v;
+  const s = '﻿' + [H, ...rows].map(r=>r.map(q).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([s],{type:'text/csv;charset=utf-8'}));
+  a.download = `피오티랩_휠체어설문_${FILTER}_${new Date().toISOString().slice(0,10)}.csv`; a.click();
+}
+</script>
+</body>
+</html>
